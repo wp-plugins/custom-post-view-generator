@@ -37,13 +37,14 @@ USAGE:
 
 1. Go to 'Page Views' on the 'CTP View Generator'
 1. Select a Custom Post Type in the top drop-down box **Post type** and drag the a desired field on **Available fields** area to the left side.
-1. After dragging the field, a grey box will be displayed allowing to setup the display properties of that field. Write the desired label for that custom field, select the appropriate type (you can either test each one, or check the *Fields Info* section), select available output options and press **Save Layout**.
+1. After dragging the field, a grey box will be displayed allowing to setup the display properties of that field. Write the desired label for that custom field, select the appropriate type (you can either test each one, or check the *Fields Info* section in **Other Notes** page), select available output options and press **Save Layout**.
 1.  OPTIONAL: You can also change the field order by dragging the grey box(es) up and down and even select a diferent view template on the **Template** drop-down box and press **Save Layout** to save the changes.
 
 == Screenshots ==
 
-1. Administration Page.
-2. Frontent View.
+1. Frontent View.
+2. Administration Page.
+
 
 == Frequently Asked Questions ==
 

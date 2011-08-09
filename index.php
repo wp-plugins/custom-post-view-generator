@@ -240,6 +240,7 @@ function cpvg_help() {
 	$faq_info = "== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');
 	$usage_info = "== Instructions ==".cpvg_get_between($readme,'= Instructions =','== Screenshots ==');
 	$fields_info = "== Fields Info ==".cpvg_get_between($readme,'== Fields Info ==','== Changelog ==');
+	$usage_info = str_replace(" in **Other Notes** page","",$readme);
 
 	$readme = $usage_info.$fields_info.$faq_info;
 	//Parses Markdown
