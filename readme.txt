@@ -14,7 +14,7 @@ Create views allowing the user to display of data of custom fields from custom p
 
 The plugin allows administrator the ability to create views by simply selecting a custom post type, the custom fields and their respective types on the administration page and each time someone views a custom post from that type, the data from the custom fields will be displayed on the frontend.
 
-This plugin was only tested with custom post types created by the following plugins: **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/), **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/), **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/), so this it will only work in conjuction with these one.
+This plugin was only tested with custom post types created by the following plugins: **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/), **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/), **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/), so this it will only work in conjuction with one these plugins.
 
 PLEASE READ THE Frequently Asked Questions FOR MORE DETAILED INFORMATION.
 
