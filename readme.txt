@@ -117,3 +117,7 @@ When selecting wich custom fields are going to be displayed, you need to select 
 
 = 0.1 =
 First version of the plugin.
+
+= 0.1.1 =
+Fixed issue wich resulted warnings in php versions before 5.3.
+
