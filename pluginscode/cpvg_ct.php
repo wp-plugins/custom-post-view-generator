@@ -42,20 +42,22 @@ class cpvg_ct{
 				$values = array();
 
 				foreach($post_meta_data[0] as $field_data){
-					$unsanitized_values_aux = explode("\n",$field_data['type_option_data']);
+					if(isset($field_data['type_option_data'])){
+						$unsanitized_values_aux = explode("\n",$field_data['type_option_data']);
 
-					if(!$unsanitized_values_aux[0]){
-						$unsanitized_values = null;
-					}else{
-						$unsanitized_values = array();
-						foreach($unsanitized_values_aux as $value){
-							$unsanitized_values[sanitize_title_with_dashes($value)] = trim($value);
+						if(!$unsanitized_values_aux[0]){
+							$unsanitized_values = null;
+						}else{
+							$unsanitized_values = array();
+							foreach($unsanitized_values_aux as $value){
+								$unsanitized_values[sanitize_title_with_dashes($value)] = trim($value);
+							}
 						}
-					}
 
-					foreach($data['fields'] as $data_field_idx => $data_field_value){
-						if($data_field_value['name'] == $field_data['name'] && !is_null($unsanitized_values)){
-							$data['fields'][$data_field_idx]['additional_data']['content_types_plugin_data'] = $unsanitized_values;
+						foreach($data['fields'] as $data_field_idx => $data_field_value){
+							if($data_field_value['name'] == $field_data['name'] && !is_null($unsanitized_values)){
+								$data['fields'][$data_field_idx]['additional_data']['content_types_plugin_data'] = $unsanitized_values;
+							}
 						}
 					}
 				}

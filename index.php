@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.1.1
+Version: 0.1.2
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -59,7 +59,8 @@ if (is_admin()){
 }else{
 	wp_register_script( 'cpvg_flowplayer', CPVG_PLUGIN_URL . '/libs/flowplayer/flowplayer-3.2.6.min.js', false, null);
 	wp_enqueue_script(array('cpvg_flowplayer'));
-	add_filter('the_content', 'cpvg_process_page');
+
+	add_filter('the_content', 'cpvg_process_page',-999);
 }
 
 function cpvg_menu_pages() {
@@ -240,7 +241,7 @@ function cpvg_help() {
     }
 
 	$readme = file_get_contents(CPVG_PLUGIN_DIR.'/readme.txt');
-	$readme = make_clickable(nl2br(wp_specialchars($readme)));
+	$readme = make_clickable(nl2br(esc_html($readme)));
 
 
 	$faq_info = "== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');

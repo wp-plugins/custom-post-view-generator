@@ -121,3 +121,6 @@ First version of the plugin.
 = 0.1.1 =
 Fixed issue wich resulted warnings in php versions before 5.3.
 
+= 0.1.2 =
+Fixed bug that result incompatibility with other plugins that are using the add_filter function.
+Fixed issue wich resulted warnings with content types plugins.
