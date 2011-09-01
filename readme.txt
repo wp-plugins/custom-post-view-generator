@@ -4,7 +4,7 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view
 Requires at least: 3.0
 Tested up to: 3.1.2
-Stable Tag: trunk
+Stable Tag: 1.3
 
 Create views allowing the user to display of data of custom fields from custom post types without the any theme modification.
 
