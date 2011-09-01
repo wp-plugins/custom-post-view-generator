@@ -126,6 +126,6 @@ Fixed bug that result incompatibility with other plugins that are using the add_
 Fixed issue wich resulted warnings with content types plugins.
 
 = 0.1.3 =
-Fixed bug that resulted in shortcode not being processed.
+Fixed bug that resulted in shortcodes not being processed.
 Fixed error in template.
 Added template.
