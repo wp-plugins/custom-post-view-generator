@@ -1,8 +1,10 @@
-RECORD DATA ARRAY: 
+RECORD DATA ARRAY:
 	$record_data
 
-RECORD DATA FIELDS: 
+RECORD DATA FIELDS:
 	value, name, label, type, options1, options2, options3, options4
+
+	NOTE1: The type of wordpress content editor is: content-editor
 
 BASIC TEMPLATE:
 
@@ -12,5 +14,5 @@ BASIC TEMPLATE:
 	}
 ?>
 
- 
+
 

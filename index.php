@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.1.2
+Version: 0.1.3
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -360,6 +360,7 @@ function cpvg_generate_html($data=null){
 		}
 	}
 
+	ob_start();
 	if(file_exists($template)){
 		require_once $template;
 	}else{
@@ -367,7 +368,10 @@ function cpvg_generate_html($data=null){
 		foreach($record_data as $record){
 			echo "<b>".$record['name']."</b>: ".$record['value']."<br/>";
 		}
+
 	}
+	$html = ob_get_contents();
+	ob_end_clean();
 
 	return $html;
 }

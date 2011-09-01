@@ -20,7 +20,7 @@
 <table class='cpvg-table'>
 	<?php
 		foreach($record_data as $record){
-		cpvg_content_types_plugin_parse	echo "<tr><th>".$record['label']."</th><td>".$record['value']."</td>";
+			echo "<tr><th>".$record['label']."</th><td>".$record['value']."</td>";
 		}
 	?>
 </table>
