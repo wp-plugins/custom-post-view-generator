@@ -128,4 +128,4 @@ Fixed issue wich resulted warnings with content types plugins.
 = 0.1.3 =
 Fixed bug that resulted in shortcode not being processed.
 Fixed error in template.
-Added another template.
+Added template.
