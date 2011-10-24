@@ -87,31 +87,31 @@ When selecting wich custom fields are going to be displayed, you need to select 
 
 = Wordpress Fields =
 
-Post, Page:
+POST, PAGE:
 
 * **ID, Parent ID** - Wordpress Post/Page ID, text
 * **Author Id** - Wordpress User ID, text
 * **Creation Date, Last modified** - Date, text
 * **Post Url** - Hyperlink, text
 
-User:
+USER:
 
 * **ID**- Wordpress User ID, text
 * **User status**- boolean, text
 * **User url** - Hyperlink, text
 * **Remaing fields**: text
 
-Category:
+CATEGORY:
 
 * **Id** - Wordpress Category ID(s), Muliple values (Serialized)
 * **Remaining Fields** - Muliple values (Serialized)
 
-Tag:
+TAG:
 
 * **Id** - Wordpress Tag ID(s), Muliple values (Serialized)
 * **Remaining Fields** - Muliple values (Serialized)
 
-Postmeta, Taxonomy:
+POSTMETA, TAXONOMY:
 
 * **All Fields** - Depends how the values where stored.
 
