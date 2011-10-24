@@ -21,7 +21,7 @@ class cpvg_audio{
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
 
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			//show something in the preview
 			$audio_url = "http://releases.flowplayer.org/data/fake_empire.mp3";
 		}else{

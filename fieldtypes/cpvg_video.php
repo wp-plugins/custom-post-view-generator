@@ -30,7 +30,7 @@ class cpvg_video{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			//show something in the preview
 			$video_url = "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv";
 			$cvpg_video_size = array(425,300);
@@ -83,11 +83,7 @@ class cpvg_video{
 				break;
 			case 'flowpayer':
 				$current_id = rand(0,500);
-				$html.= "<a href='".$video_url."'
-					style='display:block;width:".$cvpg_video_size[0]."px;height:".$cvpg_video_size[1]."px;'
-					id='cpvg_player_container_".$current_id."'>
-				 </a>";
-
+				$html.= "<a id='cpvg_player_container_".$current_id."' style='display:block;width:".$cvpg_video_size[0]."px;height:".$cvpg_video_size[1]."px;' href='".$video_url."'></a>";
 				$html.="<script language='JavaScript'>
 						flowplayer( 'cpvg_player_container_".$current_id."',
 									'". CPVG_PLUGIN_URL . "/libs/flowplayer/flowplayer-3.2.7.swf',

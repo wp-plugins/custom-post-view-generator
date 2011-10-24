@@ -10,7 +10,7 @@ class cpvg_multiple_images_url_serialized{
 								 'div'=>'Delimited by div');
 
 		return array('cpvg_multiple_images_url_serialized' => array('label'=>'Muliple Image Urls (Serialized)',
-											   				   'options'=>array($output_options1)));
+											   				        'options'=>array($output_options1)));
 
     }
 
@@ -18,7 +18,7 @@ class cpvg_multiple_images_url_serialized{
 
 		$images=array();
 
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			$urls = array(CPVG_PLUGIN_URL."/wordpress-logo.png",CPVG_PLUGIN_URL."/wordpress-logo.png");
 		}else{
 			$urls = unserialize($value);

@@ -11,7 +11,7 @@ class cpvg_color_web{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			//show something in the preview
 			$colors = array("ffcc00","ffff99","cfeef6","b2ebc5","ffffff","d7ebff","dfceb9","b3ccc5","000000");
 			$value = $colors[rand(1,8)];

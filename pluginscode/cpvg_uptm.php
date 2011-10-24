@@ -9,7 +9,10 @@ class cpvg_uptm{
 		$custom_fields = get_option("xydac_cpt_".$custom_post_type);
 
 		if(is_array($custom_fields)){
-			array_walk($custom_fields, create_function('$val, $key, $obj', '$obj[$val["field_name"]] = $val["field_label"];'), &$custom_fields_data);
+			foreach($custom_fields as $custom_field_idx => $custom_field_value){
+					$custom_fields_data[$custom_field_value['field_name']] = $custom_field_value['field_label'];
+			}
+			//array_walk($custom_fields, create_function('$val, $key, $obj', '$obj[$val["field_name"]] = $val["field_label"];'), &$custom_fields_data);
 		}else{
 			return array();
 		}
@@ -47,5 +50,10 @@ class cpvg_uptm{
 
 		return $data;
 	}
+
+	public function getCategories($post_data){
+
+	}
+
 }
 ?>

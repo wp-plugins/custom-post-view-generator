@@ -17,12 +17,17 @@ class cpvg_date{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			//show something in the preview
 			$value = time();
 		}
+
+		if(!is_numeric($value)){ //MYSQL DATE
+			$value = strtotime($value);
+		}
+
 		//$output_options[1] -> date format from $output_options1
-		return strftime($output_options[1],$value);
+		return @strftime($output_options[1],$value);
 	}
 }
 ?>

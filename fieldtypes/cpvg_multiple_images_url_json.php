@@ -15,7 +15,7 @@ class cpvg_multiple_images_url_json{
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
 		$images=array();
 
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			$urls = array(CPVG_PLUGIN_URL."/wordpress-logo.png",CPVG_PLUGIN_URL."/wordpress-logo.png");
 		}else{
 			$urls = json_decode($value);

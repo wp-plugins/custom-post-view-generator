@@ -13,7 +13,7 @@ class cpvg_multiple_values_comma{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			$values = array(cpvg_random_text_value(),cpvg_random_text_value(),cpvg_random_text_value());
 		}else{
 			$values = explode(",",$value);
@@ -26,6 +26,9 @@ class cpvg_multiple_values_comma{
 					$values[$idx] = $additional_data['content_types_plugin_data'][$value];
 				}
 			}
+
+			//remove null and empty values
+			$values = array_filter($values, 'strlen');
 
 			switch($output_options[1]){
 				case 'ul': return "<ul><li>".implode("</li><li>",$values)."</li></ul>";

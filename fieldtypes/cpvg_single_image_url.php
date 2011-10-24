@@ -6,7 +6,7 @@ class cpvg_single_image_url{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 				$value = CPVG_PLUGIN_URL."/wordpress-logo.png";
 		}
 

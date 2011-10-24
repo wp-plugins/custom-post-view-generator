@@ -19,7 +19,10 @@ class cpvg_ct{
 				$custom_fields = $custom_fields[0];
 
 				if(isset($custom_fields) && is_array($custom_fields)){
-					array_walk($custom_fields, create_function('$val, $key, $obj', '$obj[$val["name"]] = $val["name"];'), &$custom_fields_data);
+					foreach($custom_fields as $custom_field_idx => $custom_field_value){
+						$custom_fields_data[cpvg_sanitize_title_with_underscores($custom_field_value['name'])] = $custom_field_value['name'];
+					}
+					//array_walk($custom_fields, create_function('$val, $key, $obj', '$obj[$val["name"]] = $val["name"];'), &$custom_fields_data);
 				}
 			}
 		}
@@ -64,8 +67,15 @@ class cpvg_ct{
 
 			}
 		}
-
 		return $data;
+	}
+	public function getCategories($post_data){
+		$result = null;
+		foreach ( get_object_taxonomies($post_data->post_type) as $tax_name ) {
+			$taxonomy = get_taxonomy($tax_name);
+			$result = wp_get_object_terms($post_data->ID,$tax_name);
+		}
+		return $result;
 	}
 }
 ?>

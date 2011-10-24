@@ -1,274 +1,649 @@
-jQuery.cpvg_data = {
-    field_ids : [] ,
-    field_data : [],
-    type_options : jQuery.parseJSON(htmlspecialchars_decode(server_data.type_options)),
-    siteurl: server_data.wpurl
-};
+//************************ KNOCKOUTJS **************************/
 
+//used to stored dynamic data that will be changed during the session
+var volatile_data = function(data){
+	var vol_data = ko.toJS(data);
 
+	for (var key in vol_data){
+		this[key] = ko.observable(vol_data[key]);
+	}
 
-function send_data(send_data_action){
-	jQuery.cpvg_data.field_data = [];
-
-	jQuery.each(jQuery.cpvg_data.field_ids,function(index, id_number) {
-			jQuery.cpvg_data.field_data[jQuery.cpvg_data.field_data.length] = { 'name':jQuery('#cpvg-fieldlist-name-'+id_number).text(),
-																				'label':jQuery('#cpvg-fieldlist-label-'+id_number).val(),
-																				'type':jQuery('#cpvg-fieldlist-type-'+id_number).val(),
-																				'options1':jQuery('#cpvg-fieldlist-output-1-'+id_number).val(),
-																				'options2':jQuery('#cpvg-fieldlist-output-2-'+id_number).val(),
-																				'options3':jQuery('#cpvg-fieldlist-output-3-'+id_number).val(),
-																				'options4':jQuery('#cpvg-fieldlist-output-4-'+id_number).val()}; });
-
-	jQuery.post(jQuery.cpvg_data.siteurl+"/wp-admin/admin-ajax.php",
-				{ action:send_data_action,
-				 'cookie': encodeURIComponent(document.cookie),
-				 'template' : jQuery('#cpvg-template-select').val(),
-				 'fields': jQuery.cpvg_data.field_data,
-				 'post-type':jQuery('#cpvg-posttype-select').val() },
-			   function(response){
-				   if(send_data_action === "save_layout" || send_data_action === "delete_layout"){
-					   jQuery('#action-message').html(response).show(1000).delay(2000).hide(1000);
-				   }
-
-				   if(send_data_action === "generate_preview"){
-					   jQuery('#cpvg-posttype-preview-content').html(response);
-				   }
-			   }
-	);
-}
-
-function get_post_type_data(){
-	jQuery.post(jQuery.cpvg_data.siteurl+"/wp-admin/admin-ajax.php",
-				{ action:'get_post_type_data',
-				 'cookie': encodeURIComponent(document.cookie),
-				 'post-type':jQuery('#cpvg-posttype-select').val() },
-				 function(response){
-					if(response != 0){
-
-						jQuery.cpvg_data.field_data = jQuery.parseJSON(response.slice(0,response.length-1));
-
-						jQuery('#cpvg-template-select').val(jQuery.cpvg_data.field_data['template_file']);
-						jQuery.cpvg_data.field_data = jQuery.cpvg_data.field_data['fields'];
-						jQuery.each(jQuery.cpvg_data.field_data,function(index, val) {
-							generate_option(jQuery('#cpvg-fieldlist'),{'field_id':val.name,
-																	  'field_label':val.label,
-																	  'field_type':val.type,
-																	  'field_options': [val.options1,val.options2,val.options3,val.options4]
-																	  });
-						});
-					}
-			    }
-	);
-}
-
-function generate_type_options(list_item_id,selected_value){
-	var type_options = jQuery('<select>').attr({'class':'cpvg-fieldlist-type','id':'cpvg-fieldlist-type-'+list_item_id})
-										 .css('min-width','120px');
-
-	var options_list = {};
-	for (var object_type in jQuery.cpvg_data.type_options){
-		type_options.append(jQuery('<option>').attr('value',object_type).append(jQuery.cpvg_data.type_options[object_type].label));
-
-		if(jQuery.cpvg_data.type_options[object_type].options != undefined){
-			options_list[object_type] = jQuery.cpvg_data.type_options[object_type].options;
+    this.setMutipleData = function(data) {
+		for(var key in data){
+			this[key](data[key]);
 		}
 	}
 
-	type_options.change(function() {
-		jQuery('#cpvg-fieldlist-output-label-'+list_item_id).hide();
+    this.setMutipleObservableData = function(data) {
+		for(var key in data){
+			if(typeof(data[key]()) != 'undefined'){
+				this[key](data[key]());
+			}
+		}
+	}
 
-		for (var i=1;i<5;i++){
-			jQuery('#cpvg-fieldlist-output-'+i+'-'+list_item_id).hide().empty();
+    this.setData = function(name,data,type) {
+		if(type == 'json'){
+			this[name] = ko.toJS(data);
+		}else if(type == 'array-append'){
+			if(!this[name]){ this[name] = ko.observableArray([]);}
+
+			for(var key in data){
+				this[name].push(data[key]);
+			}
+		}else{
+			if(!this[name]){ this[name] = ko.observable([]); }
+			this[name](data);
+		}
+    }
+}
+
+//used to store static data that will be sent to the server
+var static_data = function(static_data){
+	for (var key in static_data){
+		this[key] = static_data[key];
+	}
+
+    this.setData = function(name,data,type) {
+		this[name] = data;
+    }
+    this.setMutiple = function(static_data) {
+		for (var key in static_data){
+			this[key] = static_data[key];
+		}
+    }
+}
+
+//fieldtype option - used on the drag-and-drop options
+var fieldtype_option = function (name,label){
+	this.name = ko.observable(name);
+	this.label = ko.observable(label);
+
+	this.type = ko.observable('cpvg_text');
+
+	this.type.subscribe(function(value){
+		//garbage collection - remove options vars
+		for(var prop_name in this){
+			if(prop_name.slice(0,7) == 'options'){
+				delete this[prop_name];
+			}
+		}
+	}.bind(this));
+
+	this.removeOptionCtp = function(){
+		viewModel.current_fieldtype_options.remove(this);
+	}
+
+	this.getOutputVar = function(index){
+		if(typeof(this["options"+(index+1)]) == 'undefined'){
+			this["options"+(index+1)] = ko.observable();
+		}
+		return this["options"+(index+1)];
+	}
+}
+
+//used to store parameter data of the list views
+var param_filter = function(data){
+	this.section = ko.observable();
+	this.name = ko.observable();
+
+	this.parameter = ko.observable();
+	this.parameter.subscribe(function(value){
+		if(typeof(viewModel.getParamData('choices')) != 'undefined'){
+			this.select_input_value(false);
+		}else{
+			this.select_input_value(true);
 		}
 
-		if (jQuery(this).val() in options_list){
-			jQuery('#cpvg-fieldlist-output-label-'+list_item_id).show();
+	}.bind(this));
 
-			for (var i=1;i<5;i++){
-				if(options_list[jQuery(this).val()][i-1] != undefined){
-					var cpvg_fieldlist_option = jQuery('#cpvg-fieldlist-output-'+i+'-'+list_item_id);
+	this.select_value = ko.observableArray();
+	this.input_value = ko.observable('');
+	this.select_input_value = ko.observable(false);
 
-					for (var option_id in options_list[jQuery(this).val()][i-1]){
-						cpvg_fieldlist_option.append(jQuery('<option>').attr('value',option_id).append(options_list[jQuery(this).val()][i-1][option_id]));
+	this.select_input_value.subscribe(function(value){
+		if(value){
+			jQuery('.cvpg-multi-select').attr('disabled','disabled');
+		}else{
+			jQuery('.cvpg-multi-select').removeAttr('disabled');
+
+			this.input_value('');
+		}
+	}.bind(this));
+
+	this.value = ko.dependentObservable({
+		read: function () {
+			if(this.select_input_value() == true || this.select_input_value() == "true"){
+				return this.input_value();
+			}
+
+			if(this.select_value()[0] == undefined){
+				this.select_value().shift();
+			}
+			return this.select_value();
+		},
+		write: function (value) {},
+		owner: this });
+
+	this.operator = ko.observable();
+	this.type = ko.observable('CHAR');
+
+	for (var key in data){
+		if(data[key] == 'false'){
+			this[key](false);
+		}else if(data[key] == 'true'){
+			this[key](true);
+		}else{
+			this[key](data[key]);
+		}
+	}
+}
+
+//Creates knockoutjs view model to be used of the template
+var viewModel = {
+	//MODEL VARS
+	view_type: 'post',
+	siteurl: '',
+
+	//USED IN BOTH POST AND LIST VIEW
+	available_fieldtypes: { 'types':[] , 'options':{} },
+	available_template_files: [],
+
+	available_post_types: [],
+	available_fields: {},
+	available_custom_fields: {},
+
+	selected_post_type: ko.observable(),
+
+	selected_field_section: ko.observable('post'),
+	selected_post_template: ko.observable(),
+
+	current_fieldtype_options: ko.observableArray([]),
+
+	//LIST VIEWS
+	available_listviews_names: ko.observableArray([]),
+	selected_list: { 'id' : ko.observable('') , 'name' : ko.observable(''), 'original_name' : '', 'template':ko.observable(), 'index': ko.observable(-1) },
+
+	available_param_names: [{'value':'filter','text':'Filters'} /*, {'value':'order','text':'Order By'}*/ ],
+	available_param_data: { 'filter':'', 'order':'' },
+
+	selected_param: { 'type': ko.observable('filter'), 'index': ko.observable(0), 'item':'', 'visible_form':ko.observable(false) },
+
+	current_params: {
+		'order': ko.observableArray([]),
+		'filter': ko.observableArray([])
+	},
+	post_page_name: ko.observable('Insert name for page/post'),
+	/*SERVER/ACTION FUNCTIONS*/
+	//Parses several types of data and store on the viewModel
+    setData: function(name,data,type) {
+		var existing_type = typeof(this[name]);
+
+		if(existing_type == 'undefined'){ //not set
+			switch (type){
+				case 'array':
+				case 'assocArray':
+				case 'arrayObservables': this[name] = ko.observableArray([]); break;
+				case 'observable': this[name] =  ko.observable(); break;
+				case 'observableArray': this[name](data); break;
+			}
+		}
+		switch (type){
+			case 'observable':
+			case 'observableArray': this[name](data); break;
+			case 'assocArray':
+				for(var key in data){
+					this[name][this[name].length] = { 'key':key, 'value':data[key] };
+				}
+			break;
+			case 'arrayObservables':
+				for(var key in data){
+					this[name].push( { 'value': ko.observable(data[key])} );
+				}
+			break;
+			case 'json':
+			case 'array':
+			default: this[name] = data; break;
+		}
+    },
+	//Parses all field types and available options - cpvg_text,...,etc
+	setAvailableFieldTypes: function(data) {
+		for(var key in data){
+			this.available_fieldtypes.types[this.available_fieldtypes.types.length] = {'key':key,'value':data[key].label};
+
+			if(data[key].options){
+				this.available_fieldtypes[key] = [];
+
+				for(var opt_index in data[key].options){
+					this.available_fieldtypes[key][opt_index] = [];
+
+					for(var opt_key in data[key].options[opt_index]){
+						this.available_fieldtypes[key][opt_index][this.available_fieldtypes[key][opt_index].length] = {'key':opt_key,'value':data[key].options[opt_index][opt_key]};
 					}
-
-					cpvg_fieldlist_option.show();
 				}
 			}
 		}
-	});
+    },
+    //Parses all fields and sections displayed rigth side of the forms - custom fields, post fields,..,etc
+ 	getAvailableFields: function() {
+		if(typeof(this.selected_post_type()) == 'undefined'){
+			return this.available_fields.field_sections;
+		}else{
+			if(jQuery.inArray(this.selected_post_type(),this.available_fields.field_sections) > -1){
+				return this.available_fields.field_sections;
+			}else{
+				return jQuery.merge(jQuery.merge([],this.available_fields.field_sections), [this.selected_post_type()]);
+			}
+		}
+	},
+	/*FIELD TYPE OPTIONS*/
+	//Adds a new field type - call the field is droped in the left side of the form
+	addFieldtypeOption: function(name,label){
+		this.current_fieldtype_options.push(new fieldtype_option(name,label));
+	},
+	//Cosmetic function - displays a formated name on rigth upper corner of a field type in the form of each field type
+	formartFieldtypeOptionName: function(name){
+		var name_parts = name.split(".");
 
-	if(selected_value != 'field'){
-		type_options.val(selected_value);
+		if(name_parts.length == 2){
+			var field_name = name_parts[1];
+
+			if(typeof(viewModel.available_fields[name_parts[0]]) != 'undefined' && typeof(viewModel.available_fields[name_parts[0]][name_parts[1]]) != 'undefined'){
+				field_name = viewModel.available_fields[name_parts[0]][name_parts[1]];
+			}else if(typeof(viewModel.available_custom_fields[name_parts[0]]) != 'undefined' && typeof(viewModel.available_custom_fields[name_parts[0]][name_parts[1]]) != 'undefined'){
+				field_name = viewModel.available_custom_fields[name_parts[0]][name_parts[1]];
+			}
+
+			return name_parts[0].charAt(0).toUpperCase() + name_parts[0].slice(1) + ' - ' +  field_name;
+		}
+		return name;
+	},
+	/*ACTION BUTTONS*/
+	//Send data to server - called when creating, updating and deleting views
+	sendData: function(action){
+		var temp_data = new static_data({ 'action': action, 'post_type': this.selected_post_type() ,
+										   'view_type': this.view_type, 'post_type': this.selected_post_type() });
+
+		if(this.view_type == 'post'){
+			temp_data.setData("view_value",this.selected_post_type());
+		}else if(this.view_type == 'list'){
+			temp_data.setMutiple({ "view_value":this.selected_list.original_name,
+								   "new_view_value":this.selected_list.name() });
+		}
+
+		if(action != 'delete_layout'){
+			temp_data.setMutiple({ "template":this.selected_post_template(),
+								   "fields":this.current_fieldtype_options() });
+
+			if(this.view_type == 'list'){
+				temp_data.setData("param",{});
+				for(var key in this.current_params){
+					temp_data.param[key] = this.current_params[key];
+				}
+				temp_data.setData("template",this.selected_list.template());
+			}else if(this.view_type == 'post'){
+				temp_data.setData("template",this.selected_post_template());
+			}
+		}
+
+		var send_data = ko.toJS(temp_data);
+		delete send_data.setData;
+		delete send_data.setMutiple;
+
+		//IF ACTION IS DELETE NO NEED TO DELETE EXTA DATA SINCE ITS NOT GOING TO BE SAVED
+		if(action != 'delete_layout'){
+			for(var field_key in send_data["fields"]){
+				for(var prop_key in send_data["fields"][field_key]){
+					if(typeof(send_data["fields"][field_key][prop_key]) == 'function'){
+						delete send_data["fields"][field_key][prop_key];
+					}
+				}
+			}
+		}
+
+		//console.log(send_data);
+
+		jQuery.post(this.siteurl+"/wp-admin/admin-ajax.php",send_data,
+		   function(response){
+			   if(action === "save_layout" || action === "delete_layout"){
+					jQuery('.action-message').html(response).show(1000).delay(2000).hide(1000);
+
+					if(action == "delete_layout" && typeof(this.current_fieldtype_options) != 'undefined'){
+						this.current_fieldtype_options.removeAll();
+					}
+			   }
+			   if(action == "generate_preview"){
+				   jQuery('#cpvg-posttype-preview-content').html(response);
+			   }
+		   }
+		);
+	},
+	//Get data grom server - updated data when selecting a post type or clicking a list view on the forms
+	getServerData: function(){
+		var view_value = false;
+
+		if(this.view_type == 'post'){
+			view_value = this.selected_post_type();
+		}else if(this.view_type == 'list'){
+			view_value = this.selected_list.name(); //TO BE REVIEWED
+		}
+
+		if(view_value){
+			var temp_data = new static_data({ 'action': 'get_' + this.view_type + '_view_data',
+											  'view_value':view_value,
+											  'view_type': this.view_type });
+
+			jQuery.post(this.siteurl+"/wp-admin/admin-ajax.php",ko.toJS(temp_data),
+						 function(response){
+							if(response != 0){
+								viewModel.parseServerData(jQuery.parseJSON(response.slice(0,response.length-1)));
+							}
+						}
+			);
+		}
+	},
+	//Parses data received from server and updates all objects
+    parseServerData: function(config_data) {
+		var opt, available_options = [];
+		this.current_fieldtype_options.removeAll();
+
+		for(var param_name in this.current_params){
+			this.current_params[param_name].removeAll();
+		}
+
+		if(this.view_type == 'list' && typeof(config_data.post_type) != 'undefined' ){
+			this.selected_post_type(config_data.post_type);
+			this.selected_list.template	(config_data.template_file);
+
+			if(typeof(config_data['param']) != 'undefined'){
+				var param = '';
+				for(var param_name in config_data['param']){
+					for(var param_key in config_data['param'][param_name]){
+						if(param_name == 'filter'){
+							param = new param_filter(config_data['param'][param_name][param_key]);
+						}else if(param_name == 'order'){
+							//TODO LATER WHEN NEW OPTIONS ARE ADDED
+						}else{
+							//TODO LATER WHEN NEW OPTIONS ARE ADDED
+						}
+						this.current_params[param_name].push(param);
+					}
+				}
+			}
+		}
+		if(this.view_type == 'post'){
+			this.selected_post_template(config_data.template_file);
+		}
+
+		for(var opt_key in config_data.fields){
+			if(config_data.fields[opt_key]['type'] == "content-editor"){
+				config_data.fields[opt_key]['type'] = "cpvg_text";
+			}
+
+			opt = new fieldtype_option(config_data.fields[opt_key]['name'],config_data.fields[opt_key]['label']);
+			opt.type(config_data.fields[opt_key]['type']);
+
+			for(var var_key in config_data.fields[opt_key]){
+				if(var_key.slice(0,7) == 'options'){
+					opt[var_key] = ko.observable(config_data.fields[opt_key][var_key]);
+				}
+			}
+			this.current_fieldtype_options.push(opt);
+		}
+	},
+	/*LIST VIEWS*/
+	//Performs several list view actions
+	listViewAction: function(action,index,item,new_item){
+		switch (action){
+			case 'add':
+				var new_item = { 'value' : ko.observable('list'+new Date().getTime()) };
+				this.available_list_views.push(new_item);
+				this.current_fieldtype_options.removeAll();
+				this.listViewAction('select',this.available_list_views().length-1,new_item.value(),true);
+				this.listViewAction('save');
+			break;
+			case 'select':
+				//update selected_list
+				this.selected_list.name(item);
+				this.selected_list.original_name = item;
+				this.selected_list.index(index);
+
+				//reset select_param
+				this.selected_param.type('filter');
+				this.selected_param.index(0);
+				this.selected_param.item = '';
+				this.selected_param.visible_form(false);
+
+				if(typeof(new_item)=='undefined'){
+					this.getServerData();
+				}
+			break;
+			case 'delete':
+				this.listViewAction('select',index,this.available_list_views()[index].value());
+				this.sendData('delete_layout');
+				this.selected_list.name(undefined);
+				this.selected_list.template(undefined);
+				this.selected_post_type(undefined);
+				this.available_list_views.remove(this.available_list_views()[index]);
+
+				//reset selected_list
+				this.selected_list.name('');
+				this.selected_list.original_name = '';
+				this.selected_list.index(-1);
+
+				//reset fieldtype_options
+				this.current_fieldtype_options.removeAll();
+			break;
+			case 'save':
+				this.sendData('save_layout');
+				this.selected_list.original_name = this.selected_list.name();
+				if(this.selected_list.index() > -1){
+					this.available_list_views()[this.selected_list.index()].value(this.selected_list.name());
+				}
+			break;
+		}
+	},
+	//Parses the parameter data from a list view received from the server
+	parseParamConfig: function(var_name,data) {
+		var paramData = ko.toJS(data);
+		var sdata = { 'sections':[], 'fields':[], 'choices':[], 'mutiple_choices':[], 'messages':{}, 'operators':{}, 'types':{} };
+
+		for(var section_key in paramData){
+			sdata['sections'][sdata['sections'].length] = section_key;
+
+			for(var var_key in paramData[section_key]){
+				if(var_key == 'message'){
+					sdata['messages'][section_key] = paramData[section_key][var_key];
+				}else if(var_key == 'mutiple_choices'){
+					sdata['mutiple_choices'] = jQuery.merge(sdata['mutiple_choices'], paramData[section_key][var_key]);
+				}else if(var_key == 'operator' || var_key == 'type'){
+					var values = paramData[section_key][var_key];
+					sdata[var_key+'s'][section_key] = [];
+					for(var operator_key in values){
+						sdata[var_key+'s'][section_key][sdata[var_key+'s'][section_key].length] = {'key':operator_key, 'value':values[operator_key]};
+					}
+				}else{
+					for(var value_key in paramData[section_key][var_key]){
+
+						if(typeof(paramData[section_key][var_key][value_key]) == 'object'){ // CHOICES
+
+							if(typeof(sdata['choices'][section_key]) == 'undefined'){
+								sdata['choices'][section_key] = { };
+							}
+
+							if(typeof(sdata['choices'][section_key][value_key]) == 'undefined'){
+								sdata['choices'][section_key][value_key] = [];
+							}
+
+							for(var obj_key in paramData[section_key][var_key][value_key]){
+								sdata['choices'][section_key][value_key][sdata['choices'][section_key][value_key].length] = { 'key': obj_key,'value': paramData[section_key][var_key][value_key][obj_key] };
+							}
+						}else{ //FIELDS
+							if(typeof(sdata['fields'][section_key]) == 'undefined'){
+								sdata['fields'][section_key] = [];
+							}
+							sdata['fields'][section_key][sdata['fields'][section_key].length] = { 'key': value_key,'value': paramData[section_key][var_key][value_key] };
+						}
+					}
+				}
+			}
+		}
+		this.available_param_data[var_name] = sdata;
+	},
+	//Returns parameter data - used to fill/refresh the list view form data
+	getParamData: function(field_name,observable){
+		var curr_type = this.selected_param.type();
+		var curr_index = this.selected_param.index();
+
+		switch(field_name){
+		case 'current_records':
+		  return this.current_params[curr_type];
+		case 'sections':
+			if(typeof(this.available_param_data[curr_type]['sections']) != 'undefined' ){
+				return this.available_param_data[curr_type]['sections'];
+			}
+			break;
+		case 'fields':
+		    var curr_section = this.getParamData('section');
+
+			if (typeof(this.available_param_data[curr_type]['fields']) != 'undefined' &&
+				typeof(curr_section) != 'undefined' &&
+				typeof(this.available_param_data[curr_type]['fields'][curr_section()]) != 'undefined' ){
+					return this.available_param_data[curr_type][field_name][curr_section()];
+			}
+			break;
+		case 'types':
+		case 'operators':
+		case 'messages':
+			var curr_section = this.getParamData('section');
+			if (typeof(this.available_param_data[curr_type][field_name]) != 'undefined' &&
+				typeof(curr_section) != 'undefined' &&
+				typeof(this.available_param_data[curr_type][field_name][curr_section()])){
+
+				return this.available_param_data[curr_type][field_name][curr_section()];
+			}
+			return [];
+			break;
+		case 'choices':
+			var curr_section = this.getParamData('section');
+			var curr_param = this.getParamData('parameter');
+
+			if (typeof(this.available_param_data[curr_type]['choices']) != 'undefined' &&
+				typeof(curr_section) != 'undefined' &&
+				typeof(curr_param) != 'undefined' &&
+				typeof(this.available_param_data[curr_type]['choices'][curr_section()]) != 'undefined' ){
+
+					if(typeof(this.current_params[curr_type]()[curr_index])!='undefined'){
+						if(jQuery.inArray(curr_param(),this.available_param_data[curr_type]['mutiple_choices']) > -1){
+							jQuery('.cvpg-multi-select').attr('multiple','');
+						}else{
+							jQuery('.cvpg-multi-select').removeAttr('multiple');
+						}
+					}
+
+					return this.available_param_data[curr_type]['choices'][curr_section()][curr_param()];
+			}
+			break;
+		default:
+			if(typeof(this.current_params[curr_type]()[curr_index])!='undefined'){
+				if(observable){
+					return this.current_params[curr_type]()[curr_index][field_name]();
+				}
+				return this.current_params[curr_type]()[curr_index][field_name];
+			}
+			break;
+		}
+		return undefined;
+	},
+	//Performs several parameters actions in the list view form
+	runParamAction: function(action,item){
+		if(action == 'select'){
+			this.selected_param.index(this.current_params[this.selected_param.type()].indexOf(item));
+			this.selected_param.item = item;
+			this.selected_param.visible_form(true);
+			this.getParamData('choices');
+		}else if(action == 'remove'){
+			this.selected_param.index(undefined);
+			this.current_params[this.selected_param.type()].remove(item);
+			this.selected_param.visible_form(false);
+		}else{
+			//add + select
+			var new_item = '';
+			if(this.selected_param.type() == 'filter'){
+				new_item = new param_filter({ 'name':'filter'+new Date().getTime()});
+			}
+			this.current_params[this.selected_param.type()].push(new_item);
+			this.runParamAction('select',new_item);
+		}
+	},
+	createPostPage: function(object_type) {
+		this.sendData('save');
+		var temp_data = { 'action': 'create_postpage', 'name': this.post_page_name(),
+						  'object_type':object_type, 'list_view_name': this.selected_list.name() };
+
+		jQuery.post(this.siteurl+"/wp-admin/admin-ajax.php",ko.toJS(temp_data),
+		   function(response){
+			   jQuery('.action-message').html(response.slice(0,response.length-1)).show(1000).delay(2000).hide(1000);
+		   }
+		);
+	},
+	/* MISC */
+	debugServerData: function(data) {
+		//console.log();
 	}
-
-	return type_options;
 }
 
+//Each time selected_post_type is change, all data is refreshed/updated
+viewModel.selected_post_type.subscribe(function() {
+	this.current_fieldtype_options.removeAll();
 
-function generate_option(append_object,data){
-	var list_item_id = generate_random_id(jQuery.cpvg_data.field_ids);
-	jQuery.cpvg_data.field_ids[jQuery.cpvg_data.field_ids.length] = list_item_id;
+    if(this.view_type == 'post'){ this.getServerData(); }
 
-	if(data.field_type === 'content-editor'){ data.field_id = 'Content Editor'; }
+	//COSMETIC
+	this.selected_post_template(this.available_template_files[0]['key']);
+	jQuery('#cpvg-posttype-preview-content').html('');
+}, viewModel);
 
-	var list_item_content = jQuery("<span>").append(jQuery("<span>").append(data.field_id)
-																	.attr({'class':'cpvg-fieldlist-name','id':'cpvg-fieldlist-name-'+list_item_id }))
-											.append(jQuery('<span>').append(jQuery('<a>').attr('href','#')
-																	.text('Remove')
-																	.click(function(){
-																		jQuery('#cpvg-fieldlist-item-'+list_item_id).remove();
-																		jQuery.cpvg_data.field_ids = jQuery.grep(jQuery.cpvg_data.field_ids, function(value) { return value != list_item_id; });
-																	})))
-											.append('<br/>');
+//Each time a parameter type is selected the selected parameter index is set to 0
+viewModel.selected_param.type.subscribe(function() {
+	this.selected_param.index(undefined);
+}, viewModel);
 
-	list_item_content.append(jQuery('<span>').attr('class','cpvg-input-span')
-											 .append('<label for="cpvg-fieldlist-label-'+list_item_id+'">Label:</label>')
-											 .append(jQuery('<input>').attr({'type':'text','class':'cpvg-fieldlist-label','id':'cpvg-fieldlist-label-'+list_item_id })
-																	  .val(data.field_label)));
-
-	if(data.field_type === 'content-editor'){
-		list_item_content.append(jQuery('<span>').attr('class','cpvg-input-span ')
-												 .append(jQuery('<input>').attr({'class':'cpvg-fieldlist-type','id':'cpvg-fieldlist-type-'+list_item_id,
-																			 'type':'hidden','value':'content-editor'})));
-	}else{
-		var list_item_options = jQuery('<select>').attr('class','cpvg-fieldlist-options')
-												  .css('min-width','120px');
-
-		list_item_content.append(jQuery('<span>').attr('class','cpvg-input-span')
-												 .append('<label for="cpvg-fieldlist-type-'+list_item_id+'">Type:</label>')
-												 .append(generate_type_options(list_item_id,data.field_type)));
-
-		list_item_content.append(jQuery('<span>').attr('class','cpvg-input-span')
-												 .append('<br />')
-												 .append('<label id="cpvg-fieldlist-output-label-'+list_item_id+'">Output:</label>')
-												 .append(list_item_options.clone().attr('id','cpvg-fieldlist-output-1-'+list_item_id))
-												 .append(list_item_options.clone().attr('id','cpvg-fieldlist-output-2-'+list_item_id))
-												 .append(list_item_options.clone().attr('id','cpvg-fieldlist-output-3-'+list_item_id))
-												 .append(list_item_options.clone().attr('id','cpvg-fieldlist-output-4-'+list_item_id)));
-	}
-
-	jQuery("<li></li>").attr({ 'class':'cpvg-fieldlist-item','id':'cpvg-fieldlist-item-'+list_item_id })
-					   .append(list_item_content)
-					   .appendTo(append_object);
-
-	if(data.field_type=="field"){
-		jQuery('#cpvg-fieldlist-type-'+list_item_id).val('cpvg_text');
-	}
-
-    jQuery('#cpvg-fieldlist-type-'+list_item_id).trigger('change');
-
-    if(data.field_options != undefined){
-		for (var i=1;i<5;i++){
-			 jQuery('#cpvg-fieldlist-output-'+i+'-'+list_item_id).val(data.field_options[i-1]);
-		}
-	}
-}
-
-function generate_random_id(existing_ids){
-	var random_id = Math.floor(Math.random()*501);
-
-	while(jQuery.inArray(random_id, existing_ids) > -1){
-		random_id = Math.floor(Math.random()*101);
-	}
-
-	return random_id;
-}
-
-jQuery(document).ready(function(){
-	jQuery('#cpvg-posttype-select').change(function(){
-		jQuery('.cpvg-posttype-fieldgroup').hide();
-	    jQuery('#'+jQuery(this).val() +'-fieldgroup').show();
-	    jQuery('#cpvg-fieldlist').html('');
-		jQuery('#cpvg-posttype-preview-content').html("");
-	    jQuery.cpvg_data.field_ids= [];
-	    get_post_type_data();
-	});
-
-	jQuery('#cpvg-template-select').change(function(){  });
-
-	jQuery('#cpvg-preview').click(function(){ send_data("generate_preview"); });
-	jQuery('#cpvg-save-layout').click(function(){ send_data("save_layout"); });
-	jQuery('#cpvg-delete-layout').click(function(){
-		send_data("delete_layout");
-		jQuery('#cpvg-posttype-select').val("");
-		jQuery('#cpvg-posttype-preview-content').html("");
-		jQuery('#cpvg-posttype-select').trigger('change');
-	});
-
-	jQuery(".cpvg-field-draggable").draggable({
-		appendTo: "body",
-		helper: "clone"
-	});
-
-	jQuery("#cpvg-fieldlist").droppable({
-		activeClass: "ui-state-default",
-		hoverClass: "ui-state-hover",
-		accept: ":not(.ui-sortable-helper)",
-		drop: function( event, ui ){
-			var field_type = 'field';
-
-			if(ui.draggable.hasClass('cpvg-post-type-editor')){	field_type = 'content-editor'; }
-
-			generate_option(this,{'field_id':ui.draggable.attr('id'),'field_label':ui.draggable.text(),'field_type':field_type});
-		}
-	}).sortable({
-		items: "li:not(.placeholder)",
-		sort: function(){
-			jQuery(this).removeClass( "ui-state-default" );
-		},
-		update : function(){
-			jQuery.cpvg_data.field_ids = jQuery(this).sortable('toArray').map(function(val,index) {
-				return val.replace(/cpvg-fieldlist-item-/ig, '');
-			});
-		}
-	});
-
-	jQuery('#cpvg-posttype-select').trigger('change');
-});
-
-//FUNCTION FROM PHP.JS,
-//Works better than convertEntities() function
-function htmlspecialchars_decode (string, quote_style) {
-    var optTemp = 0,
-        i = 0,
-        noquotes = false;
-    if (typeof quote_style === 'undefined') {
-        quote_style = 2;
-    }
-    string = string.toString().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-    var OPTS = {
-        'ENT_NOQUOTES': 0,
-        'ENT_HTML_QUOTE_SINGLE': 1,
-        'ENT_HTML_QUOTE_DOUBLE': 2,
-        'ENT_COMPAT': 2,
-        'ENT_QUOTES': 3,
-        'ENT_IGNORE': 4
-    };
-    if (quote_style === 0) {
-        noquotes = true;
-    }
-    if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags
-        quote_style = [].concat(quote_style);
-        for (i = 0; i < quote_style.length; i++) {
-            // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
-            if (OPTS[quote_style[i]] === 0) {
-                noquotes = true;
-            } else if (OPTS[quote_style[i]]) {
-                optTemp = optTemp | OPTS[quote_style[i]];
+//Enables sorting with observableArray - Source: http://www.knockmeout.net/2011/05/dragging-dropping-and-sorting-with.html
+ko.bindingHandlers.sortableList = {
+    init: function(element, valueAccessor) {
+        var list = valueAccessor();
+        jQuery(element).sortable({
+            update: function(event, ui) {
+                //retrieve our actual data item
+                var item = ui.item.tmplItem().data;
+                //figure out its new position
+                var position = ko.utils.arrayIndexOf(ui.item.parent().children(), ui.item[0]);
+                //remove the item and add it back in the right spot
+                if (position >= 0) {
+                    list.remove(item);
+                    list.splice(position, 0, item);
+                }
             }
-        }
-        quote_style = optTemp;
+        });
     }
-    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
-        string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
-        // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
-    }
-    if (!noquotes) {
-        string = string.replace(/&quot;/g, '"');
-    }
-    // Put this in last place to avoid escape being double-decoded
-    string = string.replace(/&amp;/g, '&');
+};
 
-    return string;
-}
+//************************ INIT FUNCTION **************************/
+jQuery(document).ready(function(){
+		ko.applyBindings(viewModel);
+
+		jQuery(".cpvg-draggable-field").draggable({
+			appendTo: "body",
+			helper: "clone"
+		});
+
+		jQuery("#cpvg-fieldlist").droppable({
+			activeClass: "ui-state-default",
+			hoverClass: "ui-state-hover",
+			accept: ":not(.ui-sortable-helper)",
+			drop: function( event, ui ){
+				viewModel.addFieldtypeOption(ui.draggable.attr('id'),ui.draggable.text());
+			}
+		});
+});

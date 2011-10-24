@@ -1,32 +1,24 @@
-#icon-edit-pages{
-}
-
+/* PSOT VIEW FORM */
 #cpvg-wrap{
 	width:98%;
-	/*border: 1px #FF0000 solid; */
 }
 #cpvg-wrap h2{
 	padding-top:20px;
-	/*border: 1px #FF0000 solid; */
 }
-
 
 #cpvg-posttype-type{
 	border: 1px #00FF00 solid;
 	#padding: 3px;
 }
 #cpvg-posttype-type > div{
-	#border: 1px #00FF00 solid;
 	padding: 5px;
 	line-height: 20px;
 }
-
 #cpvg-posttype-type div select{
 	min-width: 120px;
 }
 
 #cpvg-posttype-view{
-	/*border: 1px #FF0000 solid;*/
 	width:70%;
 	float:left;
 	padding: 10px;
@@ -40,7 +32,6 @@
 	float:right;
 	width:25%;
 	padding: 10px;
-	/*border: 1px #FF0000 solid;*/
 }
 
 #cpvg-posttype-fields-content{
@@ -58,7 +49,7 @@
 }
 
 #cpvg-posttype-preview{
-	width:100%;
+	width:98%;
 	float:left;
 	padding:10px;
 }
@@ -67,15 +58,9 @@
 	min-height: 100px;
 }
 
-
-
 #cpvg-fieldlist{
 	border: 1px #7F7F7F dashed;
 	min-height: 100px;
-}
-
-#cpvg-posttype-preview{
-	/*border: 1px #FF0000 solid; */
 }
 
 #cpvg-post-type-file{
@@ -99,7 +84,6 @@
 }
 
 .cpvg-fieldlist-item {
-	/*border: 1px #FF0000 solid; */
 	line-height: 20px;
 	padding-left: 5px;
 	background-color:#E5E5E5;
@@ -112,6 +96,7 @@
 	border-radius:6px;
 	cursor:default;
 }
+
 .cpvg-fieldlist-item .cpvg-input-span{
 	line-height: 30px;
 }
@@ -130,9 +115,88 @@
 
 }
 
-#action-message{
+.action-message{
 	display: none;
 	font-weight:bold;
 	padding-left: 3px;
 	width: 300px;
+}
+
+/* LIST VIEWS */
+#cpvg_param{
+	min-width:150px;
+	text-align: center;
+	padding: 3px;
+
+    -webkit-background-size: 100%;
+    -o-background-size: 100%;
+    -khtml-background-size: 100%;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+	border-radius: 8px;
+}
+
+#cpvg_param select{
+	min-width:150px;
+}
+
+.cpvg-record-list{
+	min-width:150px;
+	font-size:11px;
+	list-style: disc outside none;
+	padding-left: 15px;
+	padding-right: 4px;
+	margin-top: 5px;
+}
+
+.cpvg-record-list li{
+	line-height: 100%;
+}
+.cpvg-rounded-border{
+	border: 2px #BFBFBF solid;
+
+    -webkit-background-size: 100%;
+    -o-background-size: 100%;
+    -khtml-background-size: 100%;
+
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+
+#cpvg_param_options{
+	padding: 3px;
+}
+
+#cpvg_param_section_message{
+	padding: 15px;
+}
+
+.cvpg_list_views_metabox table{
+	padding:3px;
+}
+.cvpg_list_views_metabox table td{
+	padding:0 15px 0 0;
+}
+
+.cvpg-options-config-table{
+	width: 100%;
+	padding: 10px;
+}
+
+.cpvg-template-select{
+	height:50px;
+}
+
+#param_section_message{
+	padding: 5px;
+}
+
+#cpvg_listview_buttons{
+	padding: 10px;
+}
+
+/*SOLVE WORDPRESS MULTISELECT SIZE BUG*/
+#wpcontent select {
+	height: auto;
 }

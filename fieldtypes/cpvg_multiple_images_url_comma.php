@@ -15,7 +15,7 @@ class cpvg_multiple_images_url_comma{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if($value=='NOT_SET'){
+		if(is_string($value) && $value=='NOT_SET'){
 			$value = CPVG_PLUGIN_URL."/wordpress-logo.png,".CPVG_PLUGIN_URL."/wordpress-logo.png";
 		}
 
