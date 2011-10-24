@@ -14,7 +14,7 @@ Creates views allowing the user to display of data of custom post type fields an
 
 The plugin allows administrator the ability to create views by simply selecting a post type, the fields and their respective types on the administration page and each time someone views a post from that type, the data from the custom fields will be displayed on the frontend.
 
-This plugin will user custom fields that are created in the page/post admin page and with fields created with the following plugin:
+This plugin will use custom fields that are created in the wordpress page/post admin page and with fields created with the following plugins:
 
 * **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/)
 * **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/)
@@ -33,7 +33,7 @@ or by using the 'Add New' in 'Plugins' menu in WordPress
 
 POST VIEWS:
 
-1. Create the desired custom fields with page/post admin page or plugins mentioned in the description.
+1. Create the desired custom fields in the wordpress page/post admin page or with the plugins mentioned in the description.
 1. Go to 'Page Views' on the 'CTP View Generator'
 1. Select a post yype in the top drop-down box **Post type** and drag the a desired field on **Available fields** area to the left side.
 1. After dragging the field, a grey box will be displayed allowing to setup the display properties of that field. Write the desired label for that custom field, select the appropriate type (you can either test each one, or check the *Fields Info* section in **Other Notes** page), select available output options and press **Save Layout**.
@@ -46,7 +46,7 @@ LIST VIEWS:
 1. In the 'Fields' meta box, follow the same instructions that are indicated for the creation of 'Post Views'.
 1. In the 'Finish' meta box press **Save Layout** and use the shortcode suggested in the 'List Views' meta box in a post or page to display the list view.
 1. OPTIONAL 1: You can also add filters in the 'Paremeters' meta box, just make sure you read all intructions that are presented on the right side each time you change the paremeter section.
-1. OPTIONAL 2: You can use the buttons in the 'Finish' meta box to instantly create a post or page to to display the list view.
+1. OPTIONAL 2: You can use the extra buttons in the 'Finish' meta box to instantly create a post or page to to display the list view.
 
 == Screenshots ==
 
@@ -67,7 +67,7 @@ No. Most custom post type plugins store the necessary information in diferent ta
 
 = Are you going to add suport for more custom post type plugins ? =
 
-Depends. The custom post type plugins that this plugin supports are very complete, and my opinion, the best plugins for creating custom post types, so it might not be worth it to add more, especially since some of them might take too much work. If someone sends me code for 'plugincode' or 'fieldtypes' folders or if the the plugin in question is widely used, I might add it.
+Depends. The custom post type plugins that this plugin supports are very complete, and my opinion, the best plugins for creating custom post types, so it might not be worth it to add more, especially since some of them might take a deal to implement them. If someone sends me code for 'plugincode' or 'fieldtypes' folders or if the the plugin in question is widely used, I might add it.
 
 = Is it possible add/remove/modify templates ? =
 
@@ -97,7 +97,7 @@ POST, PAGE:
 USER:
 
 * **ID**- Wordpress User ID, text
-* **User status**- boolean, text
+* **User status**- Boolean, text
 * **User url** - Hyperlink, text
 * **Remaing fields**: text
 
