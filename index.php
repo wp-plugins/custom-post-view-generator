@@ -740,9 +740,9 @@ function cpvg_help() {
 	$readme = make_clickable(nl2br(esc_html($readme)));
 
 	$faq_info = "== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');
-	$usage_info = "== Instructions ==".cpvg_get_between($readme,'= Instructions =','== Screenshots ==');
+	$usage_info = "== Instructions == POST VIEWS: <br />".cpvg_get_between($readme,'POST VIEWS:','LIST VIEWS:');
+	$usage_info.= "<br /><br /> LIST VIEWS: <br />".cpvg_get_between($readme,'LIST VIEWS:','== Screenshots ==');
 	$fields_info = "== Fields Info ==".cpvg_get_between($readme,'== Fields Info ==','== Changelog ==');
-	$usage_info = str_replace(" in **Other Notes** page","",$readme);
 
 	$readme = $usage_info.$fields_info.$faq_info;
 	//Parses Markdown
