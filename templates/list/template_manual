@@ -1,0 +1,22 @@
+RECORDS DATA ARRAY:
+	$records_data
+
+RECORD DATA ARRAY:
+	$record_data
+
+RECORD DATA FIELDS:
+	value, name, label, type, options1, options2, options3, options4,...,options_n
+
+BASIC TEMPLATE:
+
+<?php
+	foreach($records_data as $record_index => $record_data){
+		foreach($record_data as $record){
+			echo $record['label'].":".$record['value']."<br/>";
+		}
+		echo "<br /><br />";
+	}
+?>
+
+
+
