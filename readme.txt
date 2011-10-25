@@ -4,7 +4,7 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view, list,
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable Tag: 0.2.0
+Stable Tag: 0.2.1
 
 Creates views allowing the user to display of data of custom post type fields and other wordpres fields without the any theme modification.
 
@@ -174,3 +174,6 @@ Complete rewrite of code for better perfomance.
 Added option to create views for post and pages.
 Added option to select fields from other sections (categories, tags, etc).
 Added option to create list views.
+
+= 0.2.1 =
+Fixed bug that caused and error on wp 3.3b2
