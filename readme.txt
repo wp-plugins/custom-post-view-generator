@@ -176,4 +176,4 @@ Added option to select fields from other sections (categories, tags, etc).
 Added option to create list views.
 
 = 0.2.1 =
-Fixed bug that caused and error on wp 3.3b2
+Fixed bug that caused and error on wp 3.3b2.
