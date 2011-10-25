@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.2.0
+Version: 0.2.1
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -739,10 +739,15 @@ function cpvg_help() {
 	$readme = file_get_contents(CPVG_PLUGIN_DIR.'/readme.txt');
 	$readme = make_clickable(nl2br(esc_html($readme)));
 
-	$faq_info = "== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');
+	$faq_info = "<br /><br /><br />== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');
 	$usage_info = "== Instructions == POST VIEWS: <br />".cpvg_get_between($readme,'POST VIEWS:','LIST VIEWS:');
 	$usage_info.= "<br /><br /> LIST VIEWS: <br />".cpvg_get_between($readme,'LIST VIEWS:','== Screenshots ==');
-	$fields_info = "== Fields Info ==".cpvg_get_between($readme,'== Fields Info ==','== Changelog ==');
+	$fields_info = "<br /><br />== Fields Info == = Wordpress Fields = Post, Page: <br />".cpvg_get_between($readme,'POST, PAGE:','USER:');
+	$fields_info.= "<br /><br />User: <br />".cpvg_get_between($readme,'USER:','CATEGORY:');
+	$fields_info.= "<br /><br />Category: <br />".cpvg_get_between($readme,'CATEGORY:','TAG:');
+	$fields_info.= "<br /><br />Tag: <br />".cpvg_get_between($readme,'TAG:','POSTMETA, TAXONOMY:');
+	$fields_info.= "<br /><br />Postmeta, Taxonomy: <br />".cpvg_get_between($readme,'POSTMETA, TAXONOMY:','= Content Types By Brian S. Reed =');
+	$fields_info.= "<br /><br />= Content Types By Brian S. Reed =".cpvg_get_between($readme,'= Content Types By Brian S. Reed =','== Changelog ==');
 
 	$readme = $usage_info.$fields_info.$faq_info;
 	//Parses Markdown
@@ -853,7 +858,10 @@ function cpvg_get_between($input, $start, $end){
 }
 
 function cpvg_capitalize_array_values($array){
-  array_walk($array, function(&$value, $key){ $value = ucwords($value); });
-  return $array;
+	foreach($array as $key=>$value){
+		$array[$key] =  ucwords($value);
+	}
+	//array_walk($array, function(&$value, $key){ $value = ucwords($value); });
+	return $array;
 }
 ?>
