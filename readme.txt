@@ -6,11 +6,11 @@ Requires at least: 3.1
 Tested up to: 3.2.1
 Stable Tag: 0.2.1
 
-Creates views allowing the user to display of data of custom post type fields and other wordpres fields without the any theme modification.
+Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
 == Description ==
 
-Creates views allowing the user to display of data of custom post type fields and other wordpres fields without the any theme modification.
+Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
 The plugin allows administrator the ability to create views by simply selecting a post type, the fields and their respective types on the administration page and each time someone views a post from that type, the data from the custom fields will be displayed on the frontend.
 
