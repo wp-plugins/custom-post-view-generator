@@ -67,7 +67,7 @@ function Markdown($text) {
 
 ### WordPress Plugin Interface ###
 
-
+/* Markdown Extra by  Michel Fortin (http://michelf.com/) */
 
 if (isset($wp_version)) {
 	# More details about how it works here:
