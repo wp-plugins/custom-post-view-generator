@@ -200,3 +200,18 @@
 #wpcontent select {
 	height: auto;
 }
+/*DISPLAY LIST STYLE*/
+#cvpg-admin-help ul, #vpg-admin-help ol {
+	border-top: 1px dashed #eee;
+	border-bottom: 1px dashed #eee;
+}
+#cvpg-admin-help ul li {
+	margin: 0 1em;
+	padding: 0.2em;
+	list-style: square inside;
+}
+#cvpg-admin-help ol li {
+	margin: 0 3em;
+	padding: 0.2em;
+	list-style: decimal outside;
+}

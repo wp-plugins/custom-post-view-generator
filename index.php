@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.2.1
+Version: 0.2.2
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -77,8 +77,8 @@ if (is_admin()){
 	wp_enqueue_script(array('cpvg_flowplayer'));
 
 	//USED IN POST VIEWS
-	add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
 	add_filter('the_content', 'cpvg_process_page',-999);
+	add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
 
 	//USED IN LIST VIEWS
 	add_shortcode('cpvg_list ', 'cpvg_process_list');
@@ -89,11 +89,14 @@ if (is_admin()){
 * this function will return an empty string to prevent
 * from garbage being displayed because of the the_content filter
 */
-function cpvg_process_excerpt($data){
-	global $post;
+function cpvg_process_excerpt($content){
+	global $post,$wpdb;
 	$output = $post->post_excerpt;
-	if($output != ""){ return $output; }
-	return "";
+	if($output != ""){
+		return $output;
+	}else{
+		return substr(strip_tags($post->post_content), 0, 200);
+	}
 }
 
 //Create links in the workpress admin
@@ -736,38 +739,19 @@ function cpvg_create_post_page(){
 function cpvg_help() {
     if (!current_user_can('manage_options')){ wp_die('You do not have sufficient permissions to access this page.'); }
 
-	$readme = file_get_contents(CPVG_PLUGIN_DIR.'/readme.txt');
-	$readme = make_clickable(nl2br(esc_html($readme)));
+	$readme_contents = file_get_contents(CPVG_PLUGIN_DIR.'/readme.txt');
 
-	$faq_info = "<br /><br /><br />== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');
-	$usage_info = "== Instructions == POST VIEWS: <br />".cpvg_get_between($readme,'POST VIEWS:','LIST VIEWS:');
-	$usage_info.= "<br /><br /> LIST VIEWS: <br />".cpvg_get_between($readme,'LIST VIEWS:','== Screenshots ==');
-	$fields_info = "<br /><br />== Fields Info == = Wordpress Fields = Post, Page: <br />".cpvg_get_between($readme,'POST, PAGE:','USER:');
-	$fields_info.= "<br /><br />User: <br />".cpvg_get_between($readme,'USER:','CATEGORY:');
-	$fields_info.= "<br /><br />Category: <br />".cpvg_get_between($readme,'CATEGORY:','TAG:');
-	$fields_info.= "<br /><br />Tag: <br />".cpvg_get_between($readme,'TAG:','POSTMETA, TAXONOMY:');
-	$fields_info.= "<br /><br />Postmeta, Taxonomy: <br />".cpvg_get_between($readme,'POSTMETA, TAXONOMY:','= Content Types By Brian S. Reed =');
-	$fields_info.= "<br /><br />= Content Types By Brian S. Reed =".cpvg_get_between($readme,'= Content Types By Brian S. Reed =','== Changelog ==');
+	require_once CPVG_PLUGIN_DIR.'/parse-readme.php';
+	$r = new Automattic_Readme;
+	$readme = $r->parse_readme_contents($readme_contents);
 
-	$readme = $usage_info.$fields_info.$faq_info;
-	//Parses Markdown
-	$readme = preg_replace('/`(.*?)`/', '<code>\\1</code>', $readme);
-
-	$readme = preg_replace('/[\040]\*\*(.*?)\*\*/', ' <strong>\\1</strong>', $readme);
-	$readme = preg_replace('/[\040]\*(.*?)\*/', ' <em>\\1</em>', $readme);
-
-	$readme = preg_replace('/=== (.*?) ===/', '<h2>\\1</h2>', $readme);
-	$readme = preg_replace('/== (.*?) ==/', '<h3>\\1</h3>', $readme);
-	$readme = preg_replace('/= (.*?) =/', '<h4>\\1</h4>', $readme);
-
-	//Fixes a few formating issues
-	$readme = str_replace("<br />\n<br />", "", $readme);
-	$readme = str_replace('PLUGINS:', 'PLUGINS:<br>', $readme);
-	$readme = str_replace('USAGE:', '<br /><br />USAGE:<br />', $readme);
-	$readme = preg_replace('/\* /', '- ', $readme);
-	$readme = str_replace("1. ", '- ', $readme);
-
-	echo $readme;
+	echo "<div id='cvpg-admin-help'>";
+		echo "<h3>Description</h3>".$readme['sections']['description'];
+		echo str_replace("h4","h3",substr($readme['sections']['installation'],strpos($readme['sections']['installation'],'<h4>Instructions</h4>'),-1)).">";
+		echo $readme["remaining_content"];
+		echo '<h3>Frequently Asked Questions</h3>'.$readme['sections']['frequently_asked_questions'];
+	echo "</div>";
+	//var_dump(trim($instructions));
 }
 
 /****************************************** MISC **************************************************/

@@ -20,7 +20,7 @@ class cpvg_wp_attachment{
 		$output_options3 = array('text'=>'Show Text',
 								 'hyperlink'=>'Show Hyperlink');
 
-		return array('cpvg_wp_attachment' => array('label'=>'Wordpress Attachment ID',
+		return array('cpvg_wp_attachment' => array('label'=>'Wordpress Attachment ID(s)',
 											       'options' => array($output_options1,$output_options2,$output_options3)));
 
     }

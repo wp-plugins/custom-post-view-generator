@@ -1,5 +1,5 @@
 <?php
-class cpvg_multiple_values_comma{
+class cpvg_multiple_values_array{
 
     public function adminProperties() {
 		$output_options1 = array(', '=>'Delimited by comma',
@@ -8,16 +8,23 @@ class cpvg_multiple_values_comma{
 								 'ul'=>'Unordered List',
 								 'ol'=>'Ordered List');
 
-		return array('cpvg_multiple_values_comma' => array('label' => 'Multiple values (Comma)',
-													  'options' => array($output_options1)));
+		return array('cpvg_multiple_values_array' => array('label' => 'Multiple values (Array)',
+															 'options' => array($output_options1)));
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
-		if(is_string($value) && $value=='NOT_SET'){
-			$values = array(cpvg_random_text_value(),cpvg_random_text_value(),cpvg_random_text_value());
+		if(is_string($value)){
+			if($value=='NOT_SET'){
+				$values = array(cpvg_random_text_value(),cpvg_random_text_value(),cpvg_random_text_value());
+			}else{
+				$values = array($value);
+			}
 		}else{
-			$values = explode(",",$value);
+			$values = $value;
 		}
+
+		//REQUIRED CODE TO DELIVER REMOVE EXTRA VALUE INSERTED BY THE Ultimate Post Type Manager by XYDAC (when used)
+		$values = array_diff($values,array('xydac-null'));
 
 		if(is_array($values)){
 			//REQUIRED CODE TO DELIVER NON SANATIZED VALUES SAVED BY THE Content Types plugin by iambriansreed (WHEN USED)

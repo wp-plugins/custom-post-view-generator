@@ -4,7 +4,7 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view, list,
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable Tag: 0.2.1
+Stable Tag: 0.2.2
 
 Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
@@ -19,6 +19,7 @@ This plugin will use custom fields that are created in the wordpress page/post a
 * **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/)
 * **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/)
 * **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/), so this it will only work in conjuction with one these plugins.
+* **Advanced Custom Fields** by Elliot Condon (http://http://plugins.elliotcondon.com/advanced-custom-fields/)
 
 PLEASE READ THE Frequently Asked Questions AND Fields Info FOR MORE DETAILED INFORMATION.
 
@@ -83,7 +84,7 @@ If you are familiar the custom post type/fields plugin that you are using or you
 
 == Fields Info ==
 
-When selecting wich custom fields are going to be displayed, you need to select the appropriate type. Here is a list of the custom fields created by wordpress and the recomended plugins and their appropriate types in this plugin.
+When selecting wich custom fields are going to be displayed, you need to select the appropriate type. Here is a list of the custom fields created by wordpress and the recomended plugins and their appropriate types in this plugin. NOTE: plugins that add custom fields to the wordpress posts/pages store the data in the POSTMETA table, so check that section.
 
 = Wordpress Fields =
 
@@ -133,9 +134,9 @@ POSTMETA, TAXONOMY:
 * **Date** - Text, Date
 * **Dropdown** - Text
 * **Image** - Image(s) (Wordpress Attachment)
-* **Media Field** - Wordpress Attachment ID, Image (Wordpress Attachment), Audio, Video
+* **Media Field** - Wordpress Attachment ID(s), Image (Wordpress Attachment), Audio, Video
 * **Multiselect** - Multiple Values (JSON)
-* **Relation** - Wordpress Attachment ID
+* **Relation** - Wordpress Attachment ID(s)
 * **Text** - Text
 * **TextArea** - Text
 * **Wysiwyg** - Text
@@ -151,6 +152,23 @@ POSTMETA, TAXONOMY:
 * **Text** - Text
 * **Radio Button** - Mutiple Values (Vertical Bar)
 * **Combo Box** - Text
+
+= Advanced Custom Fields by Elliot Condon =
+
+* **Checkbox** - Multiple Values (Array)
+* **Date** - Text
+* **File** - Wordpress Attachment ID(s), Image(s) (Wordpress Attachment)
+* **Image** - Image(s) (Wordpress Attachment)
+* **Page Link** - Wordpress Post/Page ID
+* **Post Object** - Wordpress Post/Page ID
+* **Radio Button** - Text
+* **Relationship** - Wordpress Post/Page ID(s) (Comma)
+* **Select** - Text
+* **Select (Multiple Values)** - Multiple Values (Array)
+* **Text** - Text
+* **Text Area** - Text
+* **True / False** - Boolean
+* **Wysiwyg Editor** - Text
 
 == Changelog ==
 
@@ -177,3 +195,8 @@ Added option to create list views.
 
 = 0.2.1 =
 Fixed bug that caused and error on wp 3.3b2.
+
+= 0.2.2 =
+Fixed bug that caused post excerpt not showing.
+Added two new fieldtypes.
+Added support for the Advanced Custom Fields plugin.
