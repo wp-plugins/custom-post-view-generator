@@ -4,7 +4,7 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view, list,
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable Tag: trunk
+Stable Tag: 0.2.2
 
 Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
