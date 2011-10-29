@@ -6,15 +6,10 @@
 # Copyright (c) 2004-2009 Michel Fortin
 # <http://michelf.com/projects/php-markdown/>
 #
-# Original Markdown
+# Original Markdown 1.2.4
 # Copyright (c) 2004-2006 John Gruber
 # <http://daringfireball.net/projects/markdown/>
 #
-
-
-//define( 'MARKDOWN_VERSION',  "1.0.1n" ); # Sat 10 Oct 2009
-//define( 'MARKDOWNEXTRA_VERSION',  "1.2.4" ); # Sat 10 Oct 2009
-
 
 #
 # Global default settings:
