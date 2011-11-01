@@ -4,21 +4,22 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view, list,
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable Tag: 0.2.0
+Stable Tag: 0.2.2
 
-Creates views allowing the user to display of data of custom post type fields and other wordpres fields without the any theme modification.
+Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
 == Description ==
 
-Creates views allowing the user to display of data of custom post type fields and other wordpres fields without the any theme modification.
+Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
 The plugin allows administrator the ability to create views by simply selecting a post type, the fields and their respective types on the administration page and each time someone views a post from that type, the data from the custom fields will be displayed on the frontend.
 
-This plugin will user custom fields that are created in the page/post admin page and with fields created with the following plugin:
+This plugin will use custom fields that are created in the wordpress page/post admin page and with fields created with the following plugins:
 
 * **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/)
 * **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/)
 * **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/), so this it will only work in conjuction with one these plugins.
+* **Advanced Custom Fields** by Elliot Condon (http://http://plugins.elliotcondon.com/advanced-custom-fields/)
 
 PLEASE READ THE Frequently Asked Questions AND Fields Info FOR MORE DETAILED INFORMATION.
 
@@ -33,7 +34,7 @@ or by using the 'Add New' in 'Plugins' menu in WordPress
 
 POST VIEWS:
 
-1. Create the desired custom fields with page/post admin page or plugins mentioned in the description.
+1. Create the desired custom fields in the wordpress page/post admin page or with the plugins mentioned in the description.
 1. Go to 'Page Views' on the 'CTP View Generator'
 1. Select a post yype in the top drop-down box **Post type** and drag the a desired field on **Available fields** area to the left side.
 1. After dragging the field, a grey box will be displayed allowing to setup the display properties of that field. Write the desired label for that custom field, select the appropriate type (you can either test each one, or check the *Fields Info* section in **Other Notes** page), select available output options and press **Save Layout**.
@@ -46,7 +47,7 @@ LIST VIEWS:
 1. In the 'Fields' meta box, follow the same instructions that are indicated for the creation of 'Post Views'.
 1. In the 'Finish' meta box press **Save Layout** and use the shortcode suggested in the 'List Views' meta box in a post or page to display the list view.
 1. OPTIONAL 1: You can also add filters in the 'Paremeters' meta box, just make sure you read all intructions that are presented on the right side each time you change the paremeter section.
-1. OPTIONAL 2: You can use the buttons in the 'Finish' meta box to instantly create a post or page to to display the list view.
+1. OPTIONAL 2: You can use the extra buttons in the 'Finish' meta box to instantly create a post or page to to display the list view.
 
 == Screenshots ==
 
@@ -67,7 +68,7 @@ No. Most custom post type plugins store the necessary information in diferent ta
 
 = Are you going to add suport for more custom post type plugins ? =
 
-Depends. The custom post type plugins that this plugin supports are very complete, and my opinion, the best plugins for creating custom post types, so it might not be worth it to add more, especially since some of them might take too much work. If someone sends me code for 'plugincode' or 'fieldtypes' folders or if the the plugin in question is widely used, I might add it.
+Depends. The custom post type plugins that this plugin supports are very complete, and my opinion, the best plugins for creating custom post types, so it might not be worth it to add more, especially since some of them might take a deal to implement them. If someone sends me code for 'plugincode' or 'fieldtypes' folders or if the the plugin in question is widely used, I might add it.
 
 = Is it possible add/remove/modify templates ? =
 
@@ -83,35 +84,35 @@ If you are familiar the custom post type/fields plugin that you are using or you
 
 == Fields Info ==
 
-When selecting wich custom fields are going to be displayed, you need to select the appropriate type. Here is a list of the custom fields created by wordpress and the recomended plugins and their appropriate types in this plugin.
+When selecting wich custom fields are going to be displayed, you need to select the appropriate type. Here is a list of the custom fields created by wordpress and the recomended plugins and their appropriate types in this plugin. NOTE: plugins that add custom fields to the wordpress posts/pages store the data in the POSTMETA table, so check that section.
 
 = Wordpress Fields =
 
-Post, Page:
+POST, PAGE:
 
 * **ID, Parent ID** - Wordpress Post/Page ID, text
 * **Author Id** - Wordpress User ID, text
 * **Creation Date, Last modified** - Date, text
 * **Post Url** - Hyperlink, text
 
-User:
+USER:
 
 * **ID**- Wordpress User ID, text
-* **User status**- boolean, text
+* **User status**- Boolean, text
 * **User url** - Hyperlink, text
 * **Remaing fields**: text
 
-Category:
+CATEGORY:
 
 * **Id** - Wordpress Category ID(s), Muliple values (Serialized)
 * **Remaining Fields** - Muliple values (Serialized)
 
-Tag:
+TAG:
 
 * **Id** - Wordpress Tag ID(s), Muliple values (Serialized)
 * **Remaining Fields** - Muliple values (Serialized)
 
-Postmeta, Taxonomy:
+POSTMETA, TAXONOMY:
 
 * **All Fields** - Depends how the values where stored.
 
@@ -133,9 +134,9 @@ Postmeta, Taxonomy:
 * **Date** - Text, Date
 * **Dropdown** - Text
 * **Image** - Image(s) (Wordpress Attachment)
-* **Media Field** - Wordpress Attachment ID, Image (Wordpress Attachment), Audio, Video
+* **Media Field** - Wordpress Attachment ID(s), Image (Wordpress Attachment), Audio, Video
 * **Multiselect** - Multiple Values (JSON)
-* **Relation** - Wordpress Attachment ID
+* **Relation** - Wordpress Attachment ID(s)
 * **Text** - Text
 * **TextArea** - Text
 * **Wysiwyg** - Text
@@ -151,6 +152,23 @@ Postmeta, Taxonomy:
 * **Text** - Text
 * **Radio Button** - Mutiple Values (Vertical Bar)
 * **Combo Box** - Text
+
+= Advanced Custom Fields by Elliot Condon =
+
+* **Checkbox** - Multiple Values (Array)
+* **Date** - Text
+* **File** - Wordpress Attachment ID(s), Image(s) (Wordpress Attachment)
+* **Image** - Image(s) (Wordpress Attachment)
+* **Page Link** - Wordpress Post/Page ID
+* **Post Object** - Wordpress Post/Page ID
+* **Radio Button** - Text
+* **Relationship** - Wordpress Post/Page ID(s) (Comma)
+* **Select** - Text
+* **Select (Multiple Values)** - Multiple Values (Array)
+* **Text** - Text
+* **Text Area** - Text
+* **True / False** - Boolean
+* **Wysiwyg Editor** - Text
 
 == Changelog ==
 
@@ -174,3 +192,11 @@ Complete rewrite of code for better perfomance.
 Added option to create views for post and pages.
 Added option to select fields from other sections (categories, tags, etc).
 Added option to create list views.
+
+= 0.2.1 =
+Fixed bug that caused and error on wp 3.3b2.
+
+= 0.2.2 =
+Fixed bug that caused post excerpt not showing.
+Added two new fieldtypes.
+Added support for the Advanced Custom Fields plugin.
