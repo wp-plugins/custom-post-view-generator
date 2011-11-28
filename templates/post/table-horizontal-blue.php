@@ -18,16 +18,35 @@
 		margin:0px 0px 0px 20px;*/
 	}
 </style>
-<table class='cpvg-table'>
-	<?php
-		echo "<tr>";
-		foreach($record_data as $record){
-			echo "<th>".$record['label']."</th>";
+
+<?php	
+	$processed_data = array('labels'=>array(),'values'=>array());
+	$output = "";
+	
+	foreach($record_data as $record){
+		if(isset($record['label'])){
+			$processed_data['labels'][] = "<th>".$record['label']."</th>";
+			$processed_data['values'][] = "<td>".$record['value']."</td>";
+		}else{  
+			//if there is no label then it is a heading or horizontal line or a similar element
+			//this finishes the table and prints the element
+			if(!empty($processed_data['labels'])){
+				$output.="<table class='cpvg-table'>\n";
+				$output.="<tr>".implode("",$processed_data['labels'])."</tr>\n";
+				$output.="<tr>".implode("",$processed_data['values'])."</tr>\n";
+				$output.="</table>\n";
+			}
+			$output.=$record['value'];
+			$processed_data['labels'] = array();
+			$processed_data['values'] = array();
 		}
-		echo "</tr><tr>";
-		foreach($record_data as $record){
-			echo "<td>".$record['value']."</td>";
-		}
-		echo "</tr>";
-	?>
-</table>
+	}
+
+	if(!empty($processed_data['labels'])){
+		$output.="<table class='cpvg-table'>\n";
+		$output.="<tr>".implode("",$processed_data['labels'])."</tr>\n";
+		$output.="<tr>".implode("",$processed_data['values'])."</tr>\n";
+		$output.="</table>\n";			
+	}		
+	echo $output;
+?>

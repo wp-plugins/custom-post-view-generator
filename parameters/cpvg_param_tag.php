@@ -2,16 +2,10 @@
 class cpvg_param_tag{
 	public function getParameterData($type='filter') {
 		$param_data = array();
-/*$posttags = get_tags();
-if ($posttags) {
-  foreach($posttags as $tag) {
-    echo $tag->name . ' ';
-  }
-}*/
 		switch($type){
 			case 'filter':
 				$param_data['tag']['fields'] = array('tag_id'=>'Tag ID', 'tag__and'=>'Tag IDs (AND)', 'tag__in'=>'Tag IDs (OR)', 'tag__not_in'=>'Tag IDs (NOT IN)');
-				//$param_data['tag']['choices'] = array('tag'=>array());
+
 				$param_data['user']['mutiple_choices'] = array('tag_id','tag__and','tag__in','tag__not_in');
 
 				$param_data['tag']['message'] = array("When a multi select list is presented, the custom value field will accept a comma separed list of values.",

@@ -15,7 +15,7 @@ class cpvg_df_taxonomy{
 		return $result;
     }
 
-	public function getValue($field_name,$post_data) {
+	public function getValue($field_name,$post_data,$custom_text) {
 		$result = array();
 		$terms = get_the_terms($post_data->ID, $field_name);
 		if(is_array($terms)){

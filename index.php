@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.2.0
+Version: 0.3.0
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -43,24 +43,26 @@ if (!defined('CPVG_PARAMETER_DIR'))
 if (!defined('CPVG_POST_TEMPLATE_URL'))
     define('CPVG_POST_TEMPLATE_URL', WP_PLUGIN_URL . '/' . CPVG_PLUGIN_NAME . '/templates/post');
 
-$types_options = cpvg_load_fieldtypes(true);
+register_activation_hook(CPVG_PLUGIN_DIR.'/index.php','cpvg_activation');
+register_deactivation_hook(CPVG_PLUGIN_DIR.'/index.php','cpvg_deactivation');
+
+//require by some functions to be loaded here
+cpvg_load_fieldtypes();
 
 if (is_admin()){
+	//ADMIN LINKS
 	add_action('admin_menu', 'cpvg_menu_pages');
-
-	//CSS
-	wp_register_style('cpvg_style', CPVG_PLUGIN_URL . 'cpvg_style.css');
-	wp_enqueue_style('cpvg_style');
-
+		
 	//JS
-	wp_register_script('cpvg_functions', CPVG_PLUGIN_URL . 'cpvg_functions.js', false, null);
+	wp_register_script('cpvg_functions', CPVG_PLUGIN_URL . 'cpvg_functions.min.js', false, null);
 	wp_register_script('cpvg_flowplayer', CPVG_PLUGIN_URL . 'libs/flowplayer/flowplayer-3.2.6.min.js', false, null);
 	wp_register_script('cpvg_jquery_tmpl', CPVG_PLUGIN_URL . 'libs/knockoutjs/jquery.tmpl.min.js', false, null);
 	wp_register_script('cpvg_knockout', CPVG_PLUGIN_URL . 'libs/knockoutjs/knockout-latest.js', false, null);
-
+	
 	wp_enqueue_script(array('jquery-ui-draggable','jquery-ui-droppable','jquery-ui-sortable',
+							'jquery-ui-dialog',
 							'cpvg_flowplayer',
-							'cpvg_jquery_tmpl','cpvg_knockout','cpvg_functions'));
+							'cpvg_jquery_tmpl','cpvg_knockout','cpvg_pagination','cpvg_functions'));
 
 	//Necessary for Meta Boxes in List Views
 	wp_enqueue_script(array('common','wp-lists','postbox'));
@@ -72,28 +74,89 @@ if (is_admin()){
 	add_action('wp_ajax_get_post_view_data', 'cpvg_get_post_view_data');
 	add_action('wp_ajax_get_list_view_data', 'cpvg_get_list_view_data');
 	add_action('wp_ajax_create_postpage', 'cpvg_create_post_page');
-}else{
-	wp_register_script( 'cpvg_flowplayer', CPVG_PLUGIN_URL . '/libs/flowplayer/flowplayer-3.2.6.min.js', false, null);
-	wp_enqueue_script(array('cpvg_flowplayer'));
 
+	//LOAD CSS
+	add_action('after_setup_theme','cpvg_load_css');	
+}else{
+	wp_register_script('cpvg_flowplayer', CPVG_PLUGIN_URL . '/libs/flowplayer/flowplayer-3.2.6.min.js', false, null);
+	wp_register_script('cpvg_pagination', CPVG_PLUGIN_URL . 'libs/smartpaginator/smartpaginator.min.js', false, null);
+		
+	wp_enqueue_script(array('cpvg_flowplayer','jquery','cpvg_pagination'));
+		
 	//USED IN POST VIEWS
-	add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
 	add_filter('the_content', 'cpvg_process_page',-999);
+	add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
 
 	//USED IN LIST VIEWS
 	add_shortcode('cpvg_list ', 'cpvg_process_list');
 }
 
 /*
+ * Create tables, deletes current tables to prevent version incompatibility 
+ */ 
+function cpvg_activation(){
+	cpvg_deactivation();
+	global $wpdb,  $table_prefix;
+
+	$wp_cpvg_table = $table_prefix."cpvg_post_views";
+	if($wpdb->get_var("show tables like '$wp_cpvg_table'") != $wp_cpvg_table) {
+		$sql0  = "CREATE TABLE `". $wp_cpvg_table . "` ( ";
+		$sql0 .= "  `id`       					int(11)      NOT NULL auto_increment,";
+		$sql0 .= "  `name` 	varchar(255) NOT NULL default '', ";
+		$sql0 .= "  `options`  text         NOT NULL default '', ";
+		$sql0 .= "  UNIQUE KEY `id` (`id`) ";
+		$sql0 .= ") ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ; ";
+
+		require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+		dbDelta($sql0);
+	}
+	
+	$wp_cpvg_table = $table_prefix."cpvg_list_views";
+	if($wpdb->get_var("show tables like '$wp_cpvg_table'") != $wp_cpvg_table) {
+		$sql0  = "CREATE TABLE `". $wp_cpvg_table . "` ( ";
+		$sql0 .= "  `id`       					int(11)      NOT NULL auto_increment,";
+		$sql0 .= "  `name` 	varchar(255) NOT NULL default '', ";
+		$sql0 .= "  `options`  text         NOT NULL default '', ";
+		$sql0 .= "  UNIQUE KEY `id` (`id`) ";
+		$sql0 .= ") ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ; ";
+
+		require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+		dbDelta($sql0);
+	}		
+}
+
+/*
+ * Delete tables 
+ */ 
+function cpvg_deactivation(){
+	global $wpdb, $table_prefix;
+	$wp_cpvg_table = $table_prefix."cpvg_post_views";
+	$wpdb->query("DROP TABLE ".$wp_cpvg_table);
+	$wp_cpvg_table = $table_prefix."cpvg_list_views";
+	$wpdb->query("DROP TABLE ".$wp_cpvg_table);
+}
+
+/*
+ * This method id required because the wp_register_style cause a RTL bug
+ */ 
+function cpvg_load_css(){
+	wp_register_style('cpvg_style', CPVG_PLUGIN_URL . 'cpvg_style.css');
+	wp_enqueue_style(array('wp-jquery-ui-dialog','cpvg_style'));
+} 
+
+/*
 * Unless the post excerpt was defined by the user,
-* this function will return an empty string to prevent
+* this function will return an part of content field to prevent
 * from garbage being displayed because of the the_content filter
 */
-function cpvg_process_excerpt($data){
-	global $post;
+function cpvg_process_excerpt($content){
+	global $post,$wpdb;
 	$output = $post->post_excerpt;
-	if($output != ""){ return $output; }
-	return "";
+	if($output != ""){
+		return $output;
+	}else{
+		return substr(strip_tags($post->post_content), 0, 200);
+	}
 }
 
 //Create links in the workpress admin
@@ -112,8 +175,8 @@ function cpvg_list_views() {
         wp_die('You do not have sufficient permissions to access this page.');
     }
 
-	global $table_prefix;
-	check_database($table_prefix.'cpvg_list_views');
+	//global $table_prefix;
+	//check_database($table_prefix.'cpvg_list_views');
 
 	require_once CPVG_ADMIN_TEMPLATE_DIR . "/cpvg_list_views.html";
 
@@ -165,6 +228,9 @@ function cvpg_listview_metabox($data){
 
 		break;
 		case 'fields':
+			if(!isset($data["post_types"])){
+				$data["post_types"] = array();
+			}
 			cpvg_fieldtypes_form($data["post_types"],"list");
 		break;
 	}
@@ -252,15 +318,24 @@ function cpvg_fieldtypes_form($post_types,$view_type='post'){
 
 		if($view_type == "list"){
 			$parameters_files = cpvg_get_extensions_files("php",CPVG_PARAMETER_DIR);
-			$filter_data = array();
-			foreach($parameters_files as $parameters_file => $parameters_name){
-				require_once CPVG_PARAMETER_DIR."/".$parameters_file.".php";
-				$parameter_object = new $parameters_file();
-				$filter_data = array_merge_recursive($filter_data,$parameter_object->getParameterData());
+
+			foreach(array('filter','order','pagination') as $param_name){
+				$filter_data = array();
+				foreach($parameters_files as $parameters_file => $parameters_name){
+					require_once CPVG_PARAMETER_DIR."/".$parameters_file.".php";
+					$parameter_object = new $parameters_file();
+					$filter_data = array_merge_recursive($filter_data,$parameter_object->getParameterData($param_name));
+				}
+				echo "viewModel.parseParamConfig('".$param_name."',".json_encode($filter_data).");\n";
 			}
-			echo "viewModel.parseParamConfig('filter',".json_encode($filter_data).");\n";
 		}
+
+		$cvpg_datafield_settings = $objects_data['cvpg_datafield_extra_data'][0];		
+		echo "viewModel.setData('available_extra_data',".json_encode($cvpg_datafield_settings).",'');\n";
+
+		$objects_data = array_diff_assoc($objects_data, array('cvpg_datafield_extra_data'=>$cvpg_datafield_settings));
 		echo "viewModel.setData('available_fields',".json_encode(array_merge($objects_data,array('field_sections'=>array_keys($objects_data)))).",'json');\n";
+
 	?>
 </script>
 <?php
@@ -398,6 +473,8 @@ function cpvg_process_list($params){
 		//Gets alls the parameters for the WP_Query
 		$parameters_files = cpvg_get_extensions_files("php",CPVG_PARAMETER_DIR);
 		$parameter_data = array();
+		
+		
 		foreach($parameters_files as $parameters_file => $parameters_name){
 			require_once CPVG_PARAMETER_DIR."/".$parameters_file.".php";
 			$parameter_object = new $parameters_file();
@@ -406,7 +483,6 @@ function cpvg_process_list($params){
 				$parameter_data[$section_name] = $parameter_object;
 			}
 		}
-
 		//Merge all the parameters with the $query_args var
 		$query_args = array('post_type'=>$list_data['post_type']);
 		if(isset($list_data['param'])){
@@ -415,6 +491,11 @@ function cpvg_process_list($params){
 					$query_args = array_merge_recursive($parameter_data[$param_record_data['section']]->applyParameterData($param_type,$param_record_data),$query_args);
 				}
 			}
+		}
+		
+		if($query_args['posts_per_page']){
+			$pagination = $query_args['posts_per_page'];
+			$query_args = array_diff_assoc($query_args,array('posts_per_page'=>$query_args['posts_per_page']));
 		}
 
 		//Sets a custom filter required by the custom_date parameter if necssary
@@ -431,7 +512,8 @@ function cpvg_process_list($params){
 		if(isset($query_args['author'])){
 			$query_args['author'] = implode(",",$query_args['author']);
 		}
-
+		
+		$query_args['posts_per_page'] = 9999;
 		/*var_dump($query_args); echo "<br><br>";*/
 
 		error_reporting(0);
@@ -557,9 +639,9 @@ function cpvg_process_data($data=null,$external_template_processing=false){
 		$template =  CPVG_POST_TEMPLATE_DIR.'/'.$data['template_file'].".php"; ;
 		$fields = $data['fields'];
 	}else{
-		//Admin Post View Window Preview
+		//Admin Post View Window Preview 
 		$template = CPVG_POST_TEMPLATE_DIR.'/'.$_POST['template'].".php";
-		$fields = $_POST['fields'];
+		$fields = $_POST['fields']; 
 	}
 
 	$html = '';
@@ -584,20 +666,15 @@ function cpvg_process_data($data=null,$external_template_processing=false){
 				$output_options[$index+1] = $value;
 			}
 
-			/*for($i=1;$i<50;$i++){
-				if(isset($field_data["options".$i])){
-					$output_options[$i] = $field_data["options".$i];
-				}
-			}*/
-
 			if(isset($data['field_data'])){
 				$field_key = array_search($field_data['name'],$data['labels']);
+
 				if(($data['field_data'][$field_key][0]) && ($field_data['section'] == $data['post_type'])){
 					//CUSTOM POST TYPE
 					$field_content = $data['field_data'][$field_key][0];
 				}else if(isset($data['datafield_objects'][$field_data['section']])){
 					// OTHER SECTION: POST, USER, ETC.
-					$field_content = $data['datafield_objects'][$field_data['section']]->getValue($field_data['name'],$data['post_data']);
+					$field_content = $data['datafield_objects'][$field_data['section']]->getValue($field_data['name'],$data['post_data'],$field_data['extra_options']);
 				}
 			}else{
 				$field_content = 'NOT_SET';
@@ -611,11 +688,21 @@ function cpvg_process_data($data=null,$external_template_processing=false){
 				$fieldtype_object = new $field_data['type'];
 				$field['value'] = $fieldtype_object->processValue($field_content,$output_options,$additional_data);
 			}else{
-				$field['value'] = $field_content;
+				if($field_content == 'NOT_SET'){
+					$field['value'] = cpvg_random_text_value();
+				}else{
+					$field['value'] = $field_content;
+				}
 			}
 
 			$field = array_merge($field,$field_data);
-			$record_data[]=$field;
+			if($field['hide_empty']!='true'){
+				$record_data[]=$field;
+			}else{
+				 if (!empty($field['value'])){
+					$record_data[]=$field;
+				 }
+			}
 		}
 	}
 
@@ -662,7 +749,7 @@ function cpvg_save_layout(){
 
 			global $table_prefix,$wpdb;
 			$db_data = cpvg_get_dbfields_names($_POST['view_type']);
-			check_database($db_data['table_name']);
+			//check_database($db_data['table_name']);
 
 			$cpvg_id = $wpdb->get_var("SELECT id FROM ".$db_data['table_name']." WHERE ".$db_data['access_field']." = '".$_POST['view_value']."'");
 
@@ -736,33 +823,19 @@ function cpvg_create_post_page(){
 function cpvg_help() {
     if (!current_user_can('manage_options')){ wp_die('You do not have sufficient permissions to access this page.'); }
 
-	$readme = file_get_contents(CPVG_PLUGIN_DIR.'/readme.txt');
-	$readme = make_clickable(nl2br(esc_html($readme)));
+	$readme_contents = file_get_contents(CPVG_PLUGIN_DIR.'/readme.txt');
 
-	$faq_info = "== Frequently Asked Questions ==".cpvg_get_between($readme,'== Frequently Asked Questions ==','== Fields Info ==');
-	$usage_info = "== Instructions == POST VIEWS: <br />".cpvg_get_between($readme,'POST VIEWS:','LIST VIEWS:');
-	$usage_info.= "<br /><br /> LIST VIEWS: <br />".cpvg_get_between($readme,'LIST VIEWS:','== Screenshots ==');
-	$fields_info = "== Fields Info ==".cpvg_get_between($readme,'== Fields Info ==','== Changelog ==');
+	require_once CPVG_PLUGIN_DIR.'/parse-readme.php';
+	$r = new Automattic_Readme;
+	$readme = $r->parse_readme_contents($readme_contents);
 
-	$readme = $usage_info.$fields_info.$faq_info;
-	//Parses Markdown
-	$readme = preg_replace('/`(.*?)`/', '<code>\\1</code>', $readme);
-
-	$readme = preg_replace('/[\040]\*\*(.*?)\*\*/', ' <strong>\\1</strong>', $readme);
-	$readme = preg_replace('/[\040]\*(.*?)\*/', ' <em>\\1</em>', $readme);
-
-	$readme = preg_replace('/=== (.*?) ===/', '<h2>\\1</h2>', $readme);
-	$readme = preg_replace('/== (.*?) ==/', '<h3>\\1</h3>', $readme);
-	$readme = preg_replace('/= (.*?) =/', '<h4>\\1</h4>', $readme);
-
-	//Fixes a few formating issues
-	$readme = str_replace("<br />\n<br />", "", $readme);
-	$readme = str_replace('PLUGINS:', 'PLUGINS:<br>', $readme);
-	$readme = str_replace('USAGE:', '<br /><br />USAGE:<br />', $readme);
-	$readme = preg_replace('/\* /', '- ', $readme);
-	$readme = str_replace("1. ", '- ', $readme);
-
-	echo $readme;
+	echo "<div id='cvpg-admin-help'>";
+		echo "<h3>Description</h3>".$readme['sections']['description'];
+		echo str_replace("h4","h3",substr($readme['sections']['installation'],strpos($readme['sections']['installation'],'<h4>Instructions</h4>'),-1)).">";
+		echo $readme["remaining_content"];
+		echo '<h3>Frequently Asked Questions</h3>'.$readme['sections']['frequently_asked_questions'];
+	echo "</div>";
+	//var_dump(trim($instructions));
 }
 
 /****************************************** MISC **************************************************/
@@ -852,8 +925,12 @@ function cpvg_get_between($input, $start, $end){
   return $substr;
 }
 
+
 function cpvg_capitalize_array_values($array){
-  array_walk($array, function(&$value, $key){ $value = ucwords($value); });
-  return $array;
+	foreach($array as $key=>$value){
+		$array[$key] =  ucwords($value);
+	}
+	//array_walk($array, function(&$value, $key){ $value = ucwords($value); });
+	return $array;
 }
 ?>

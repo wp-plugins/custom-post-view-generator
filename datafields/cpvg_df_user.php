@@ -10,7 +10,7 @@ class cpvg_df_user{
 									 'user_url'=>'User url','user_nicename'=>'Nicename'));
     }
 
-	public function getValue($field_name,$post_data) {
+	public function getValue($field_name,$post_data,$custom_text) {
 		$user_data = get_user_by('id',$post_data->post_author);
 		return $user_data->$field_name;
     }
