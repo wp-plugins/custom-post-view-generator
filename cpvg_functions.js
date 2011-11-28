@@ -58,8 +58,11 @@ var static_data = function(static_data){
 var fieldtype_option = function (name,label){
 	this.name = ko.observable(name);
 	this.label = ko.observable(label);
-
+	
 	this.type = ko.observable('cpvg_text');
+	this.hide_empty =  ko.observable(false);
+	this.extra_options = { 'checkboxes':ko.observableArray([]) }
+	this.temp_data = { }
 
 	this.type.subscribe(function(value){
 		//garbage collection - remove options vars
@@ -80,10 +83,29 @@ var fieldtype_option = function (name,label){
 		}
 		return this["options"+(index+1)];
 	}
+	
+	this.moveOptionCtpUp = function(){
+		var item_index = viewModel.current_fieldtype_options.indexOf(this);
+		
+		if(item_index != 0){
+			item_index-=1;
+		}
+		viewModel.current_fieldtype_options.remove(this);
+		viewModel.current_fieldtype_options.splice(item_index,0,this);	
+	}
+	this.moveOptionCtpDown = function(){
+		var item_index = viewModel.current_fieldtype_options.indexOf(this);
+		
+		if(viewModel.current_fieldtype_options().length != 0){
+			item_index+=1;
+		}
+		viewModel.current_fieldtype_options.remove(this);
+		viewModel.current_fieldtype_options.splice(item_index,0,this);	
+	}		
 }
 
 //used to store parameter data of the list views
-var param_filter = function(data){
+var basic_param = function(data){
 	this.section = ko.observable();
 	this.name = ko.observable();
 
@@ -144,34 +166,43 @@ var viewModel = {
 	//MODEL VARS
 	view_type: 'post',
 	siteurl: '',
+	touchscreen:ko.observable(false),
 
 	//USED IN BOTH POST AND LIST VIEW
 	available_fieldtypes: { 'types':[] , 'options':{} },
 	available_template_files: [],
 
 	available_post_types: [],
+	available_all_fields: [],
+		
 	available_fields: {},
 	available_custom_fields: {},
+	available_extra_data: {},
 
 	selected_post_type: ko.observable(),
 
-	selected_field_section: ko.observable('post'),
+	selected_field_section: ko.observable(),
 	selected_post_template: ko.observable(),
 
 	current_fieldtype_options: ko.observableArray([]),
+	
+	temp_data: {},
+	//selected_field_custom_text: new fieldtype_option("section.fieldname","label"),
 
 	//LIST VIEWS
 	available_listviews_names: ko.observableArray([]),
 	selected_list: { 'id' : ko.observable('') , 'name' : ko.observable(''), 'original_name' : '', 'template':ko.observable(), 'index': ko.observable(-1) },
 
-	available_param_names: [{'value':'filter','text':'Filters'} /*, {'value':'order','text':'Order By'}*/ ],
-	available_param_data: { 'filter':'', 'order':'' },
+	available_param_names: [{'value':'filter','text':'Filters' } , { 'value':'order','text':'Sorting' },
+							{  'value':'pagination','text':'Pagination' }],
+	available_param_data: { 'filter':'', 'order':'','pagination':'' },
 
 	selected_param: { 'type': ko.observable('filter'), 'index': ko.observable(0), 'item':'', 'visible_form':ko.observable(false) },
 
 	current_params: {
 		'order': ko.observableArray([]),
-		'filter': ko.observableArray([])
+		'filter': ko.observableArray([]),
+		'pagination': ko.observableArray([])
 	},
 	post_page_name: ko.observable('Insert name for page/post'),
 	/*SERVER/ACTION FUNCTIONS*/
@@ -192,9 +223,10 @@ var viewModel = {
 			case 'observable':
 			case 'observableArray': this[name](data); break;
 			case 'assocArray':
-				for(var key in data){
+				/*for(var key in data){
 					this[name][this[name].length] = { 'key':key, 'value':data[key] };
-				}
+				}*/
+				this[name] = convert_assoc_array(data);
 			break;
 			case 'arrayObservables':
 				for(var key in data){
@@ -205,6 +237,34 @@ var viewModel = {
 			case 'array':
 			default: this[name] = data; break;
 		}
+		
+		//additional processing for certain vars
+		if(name == 'available_extra_data'){
+			for(var field_section_name in this['available_extra_data']){
+				if(typeof(this['available_extra_data'][field_section_name]['form_fields']) != 'undefined'){
+					for(var extra_field_name in this['available_extra_data'][field_section_name]['form_fields']){					
+						if(typeof(this['available_extra_data'][field_section_name]['form_fields'][extra_field_name]['options']) != 'undefined'){
+							this['available_extra_data'][field_section_name]['form_fields'][extra_field_name]['options'] = convert_assoc_array(this['available_extra_data'][field_section_name]['form_fields'][extra_field_name]['options'] );
+						}
+					}
+				}	
+			}
+		}else if(name == 'available_fields'){
+			var sections = this.getAvailableSections();
+
+			for(var section_key in sections){
+				if(sections[section_key] != 'misc'){
+					for(var field_key in this.available_fields[sections[section_key]]){
+						this.available_all_fields[this.available_all_fields.length] = { 'key':sections[section_key]+"."+field_key, 'value':sections[section_key].toUpperCase()+": "+this.available_fields[sections[section_key]][field_key] };
+					}
+				}
+			}
+			for(var section_key in sections){
+				for(var field_key in this.available_custom_fields[sections[section_key]]){
+					this.available_all_fields[this.available_all_fields.length] = { 'key':sections[section_key]+"."+this.available_custom_fields[sections[section_key]][field_key] ,'value':sections[section_key].toUpperCase()+": "+this.available_custom_fields[sections[section_key]][field_key] };
+				}
+			}			
+		}
     },
 	//Parses all field types and available options - cpvg_text,...,etc
 	setAvailableFieldTypes: function(data) {
@@ -213,7 +273,7 @@ var viewModel = {
 
 			if(data[key].options){
 				this.available_fieldtypes[key] = [];
-
+				
 				for(var opt_index in data[key].options){
 					this.available_fieldtypes[key][opt_index] = [];
 
@@ -225,7 +285,7 @@ var viewModel = {
 		}
     },
     //Parses all fields and sections displayed rigth side of the forms - custom fields, post fields,..,etc
- 	getAvailableFields: function() {
+ 	getAvailableSections: function() {
 		if(typeof(this.selected_post_type()) == 'undefined'){
 			return this.available_fields.field_sections;
 		}else{
@@ -235,11 +295,73 @@ var viewModel = {
 				return jQuery.merge(jQuery.merge([],this.available_fields.field_sections), [this.selected_post_type()]);
 			}
 		}
-	},
+	},	
 	/*FIELD TYPE OPTIONS*/
 	//Adds a new field type - call the field is droped in the left side of the form
-	addFieldtypeOption: function(name,label){
-		this.current_fieldtype_options.push(new fieldtype_option(name,label));
+	addFieldtypeOption: function(name,label,ft_option){
+		if(!(viewModel.getDatafieldExtraData(name,'label'))){
+			label = undefined;
+		}	
+		if(typeof(ft_option) == 'undefined'){
+			var new_fieldtype_option = new fieldtype_option(name,label);
+		}else{
+			var new_fieldtype_option = ft_option;
+		}
+		   
+		if(typeof(viewModel.available_extra_data[name]) != 'undefined'){
+			if(typeof(viewModel.available_extra_data[name]['form_fields']) != 'undefined'){
+				for(var f_name in viewModel.available_extra_data[name]['form_fields']){
+					
+					if(typeof(ft_option) == 'undefined'){
+						new_fieldtype_option['extra_options'][f_name] = new ko.observable();
+					}
+					
+					if(typeof(viewModel.available_extra_data[name]['form_fields'][f_name]['append_field_type']) != 'undefined'){
+						new_fieldtype_option['temp_data'][f_name] = new ko.observable();
+						viewModel.temp_data[f_name] = new fieldtype_option("section.fieldname","label");					
+					}
+				}			
+			}
+		}						
+		this.current_fieldtype_options.push(new_fieldtype_option);
+	},
+	displayFieldtypeOptionWindow: function(section_fieldname,extra_data_field,field_to_append){
+		section_fieldname_splitted = section_fieldname.split('.');
+		
+		viewModel.temp_data[extra_data_field].name(section_fieldname);
+		viewModel.temp_data[extra_data_field].label(section_fieldname_splitted[1]);
+		
+		jQuery("#cpvg-fieldtype-modal").dialog({
+			dialogClass : 'wp-dialog',
+			resizable: true,
+			width: 'auto' ,
+			height: 'auto',
+			modal: true,
+			buttons: {
+				'Append Field': function() {
+					jQuery(this).dialog('close');
+
+					var output = " [["+section_fieldname;
+					output+=";"+viewModel.temp_data[extra_data_field].type();
+
+					for(var prop_name in viewModel.temp_data[extra_data_field]){
+						if(prop_name.slice(0,7) == 'options'){
+							output+=";"+viewModel.temp_data[extra_data_field][prop_name]();
+						}
+					}
+					output+="]]";
+					if(field_to_append() == undefined){
+						field_to_append("");
+					}
+					field_to_append(field_to_append()+output);
+					viewModel.temp_data[extra_data_field].type("cpvg_text");
+				},
+				Cancel: function() {
+					jQuery(this).dialog('close');
+					viewModel.temp_data[extra_data_field].type("cpvg_text");
+				}
+			}
+		});
 	},
 	//Cosmetic function - displays a formated name on rigth upper corner of a field type in the form of each field type
 	formartFieldtypeOptionName: function(name){
@@ -258,6 +380,7 @@ var viewModel = {
 		}
 		return name;
 	},
+
 	/*ACTION BUTTONS*/
 	//Send data to server - called when creating, updating and deleting views
 	sendData: function(action){
@@ -286,21 +409,7 @@ var viewModel = {
 			}
 		}
 
-		var send_data = ko.toJS(temp_data);
-		delete send_data.setData;
-		delete send_data.setMutiple;
-
-		//IF ACTION IS DELETE NO NEED TO DELETE EXTA DATA SINCE ITS NOT GOING TO BE SAVED
-		if(action != 'delete_layout'){
-			for(var field_key in send_data["fields"]){
-				for(var prop_key in send_data["fields"][field_key]){
-					if(typeof(send_data["fields"][field_key][prop_key]) == 'function'){
-						delete send_data["fields"][field_key][prop_key];
-					}
-				}
-			}
-		}
-
+		var send_data = this.removeUnecessarySendData(ko.toJS(temp_data));
 		//console.log(send_data);
 
 		jQuery.post(this.siteurl+"/wp-admin/admin-ajax.php",send_data,
@@ -318,7 +427,42 @@ var viewModel = {
 		   }
 		);
 	},
-	//Get data grom server - updated data when selecting a post type or clicking a list view on the forms
+	//Remove unecessary/temp vars
+	removeUnecessarySendData: function(send_data){
+		delete send_data.setData;
+		delete send_data.setMutiple;
+				
+		for(var field_key in send_data["fields"]){
+			for(var prop_key in send_data["fields"][field_key]){
+				if(typeof(send_data["fields"][field_key][prop_key]) == 'function'){
+					delete send_data["fields"][field_key][prop_key];
+				}
+				if(typeof(send_data["fields"][field_key]['temp_data']) != 'undefined'){
+					delete send_data["fields"][field_key]['temp_data'];
+				}								
+			}
+			
+			var var_name = send_data["fields"][field_key]['name'];
+			if(typeof(viewModel.available_extra_data[var_name]) != 'undefined' && 
+			   typeof(viewModel.available_extra_data[var_name]['options']) != 'undefined'){
+				if(viewModel.available_extra_data[var_name]['options'] == false){					
+					for(var prop_name in send_data["fields"][field_key]){
+						if(prop_name.slice(0,7) == 'options'){
+							delete send_data["fields"][field_key][prop_name];
+						}
+					}		
+				}
+				if(viewModel.available_extra_data[var_name]['type'] == false){
+					delete send_data["fields"][field_key]['type'];
+				}					
+				if(viewModel.available_extra_data[var_name]['label'] == false){
+					delete send_data["fields"][field_key]['label'];
+				}	
+			}					
+		}	
+		return send_data;
+	},	
+	//Get data from server - updated data when selecting a post type or clicking a list view on the forms
 	getServerData: function(){
 		var view_value = false;
 
@@ -360,9 +504,11 @@ var viewModel = {
 				for(var param_name in config_data['param']){
 					for(var param_key in config_data['param'][param_name]){
 						if(param_name == 'filter'){
-							param = new param_filter(config_data['param'][param_name][param_key]);
+							param = new basic_param(config_data['param'][param_name][param_key]);
 						}else if(param_name == 'order'){
-							//TODO LATER WHEN NEW OPTIONS ARE ADDED
+							param = new basic_param(config_data['param'][param_name][param_key]);
+						}else if(param_name == 'pagination'){
+							param = new basic_param(config_data['param'][param_name][param_key]);
 						}else{
 							//TODO LATER WHEN NEW OPTIONS ARE ADDED
 						}
@@ -382,15 +528,38 @@ var viewModel = {
 
 			opt = new fieldtype_option(config_data.fields[opt_key]['name'],config_data.fields[opt_key]['label']);
 			opt.type(config_data.fields[opt_key]['type']);
-
+			if(config_data.fields[opt_key]['hide_empty'] == 'true'){
+				opt.hide_empty(true);
+			}
+			
 			for(var var_key in config_data.fields[opt_key]){
+				
 				if(var_key.slice(0,7) == 'options'){
 					opt[var_key] = ko.observable(config_data.fields[opt_key][var_key]);
+				}else if(var_key == 'extra_options'){	
+					for(var eo_key in config_data.fields[opt_key][var_key]){
+						opt[var_key][eo_key] = new ko.observable(config_data.fields[opt_key][var_key][eo_key]);
+						
+					}
 				}
 			}
-			this.current_fieldtype_options.push(opt);
+			
+			
+			this.addFieldtypeOption(config_data.fields[opt_key]['name'],config_data.fields[opt_key]['label'],opt);
 		}
 	},
+	getDatafieldExtraData: function(section_field_name,field_name){	
+		if(typeof(viewModel.available_extra_data[section_field_name]) != 'undefined'){
+			return viewModel.available_extra_data[section_field_name][field_name];
+		}
+		
+		if(field_name == 'label' || field_name == 'type' || field_name == 'options' || field_name == 'hide_empty'){
+			return true;
+		}
+		
+		return false;
+	},
+	
 	/*LIST VIEWS*/
 	//Performs several list view actions
 	listViewAction: function(action,index,item,new_item){
@@ -466,15 +635,12 @@ var viewModel = {
 					for(var value_key in paramData[section_key][var_key]){
 
 						if(typeof(paramData[section_key][var_key][value_key]) == 'object'){ // CHOICES
-
 							if(typeof(sdata['choices'][section_key]) == 'undefined'){
 								sdata['choices'][section_key] = { };
 							}
-
 							if(typeof(sdata['choices'][section_key][value_key]) == 'undefined'){
 								sdata['choices'][section_key][value_key] = [];
 							}
-
 							for(var obj_key in paramData[section_key][var_key][value_key]){
 								sdata['choices'][section_key][value_key][sdata['choices'][section_key][value_key].length] = { 'key': obj_key,'value': paramData[section_key][var_key][value_key][obj_key] };
 							}
@@ -516,6 +682,7 @@ var viewModel = {
 		case 'operators':
 		case 'messages':
 			var curr_section = this.getParamData('section');
+
 			if (typeof(this.available_param_data[curr_type][field_name]) != 'undefined' &&
 				typeof(curr_section) != 'undefined' &&
 				typeof(this.available_param_data[curr_type][field_name][curr_section()])){
@@ -540,7 +707,7 @@ var viewModel = {
 							jQuery('.cvpg-multi-select').removeAttr('multiple');
 						}
 					}
-
+					
 					return this.available_param_data[curr_type]['choices'][curr_section()][curr_param()];
 			}
 			break;
@@ -569,8 +736,10 @@ var viewModel = {
 		}else{
 			//add + select
 			var new_item = '';
-			if(this.selected_param.type() == 'filter'){
-				new_item = new param_filter({ 'name':'filter'+new Date().getTime()});
+			if(this.selected_param.type() == 'filter' || this.selected_param.type() == 'order' || this.selected_param.type() == 'pagination'  ){
+				new_item = new basic_param({ 'name': this.selected_param.type() + new Date().getTime()});
+			}else {
+				//new_item = new basic_param({ 'name': this.selected_param.type() + new Date().getTime()});
 			}
 			this.current_params[this.selected_param.type()].push(new_item);
 			this.runParamAction('select',new_item);
@@ -607,6 +776,19 @@ viewModel.selected_post_type.subscribe(function() {
 //Each time a parameter type is selected the selected parameter index is set to 0
 viewModel.selected_param.type.subscribe(function() {
 	this.selected_param.index(undefined);
+	this.selected_param.visible_form(false);
+}, viewModel);
+
+viewModel.touchscreen.subscribe(function() {
+	if(this.touchscreen()){
+		jQuery("#cpvg-fieldlist").droppable("destroy");	
+		jQuery(".cpvg-field-draggable").draggable("destroy").click(function() {
+			viewModel.addFieldtypeOption(jQuery(this).attr('id'),jQuery(this).text());
+		});
+	}else{
+		jQuery(".cpvg-field-draggable").unbind("click");
+		cvpg_set_draggable_droppable();
+	}
 }, viewModel);
 
 //Enables sorting with observableArray - Source: http://www.knockmeout.net/2011/05/dragging-dropping-and-sorting-with.html
@@ -633,7 +815,19 @@ ko.bindingHandlers.sortableList = {
 jQuery(document).ready(function(){
 		ko.applyBindings(viewModel);
 
-		jQuery(".cpvg-draggable-field").draggable({
+		cvpg_set_draggable_droppable();
+		
+		var deviceAgent = navigator.userAgent.toLowerCase();
+		var agentID = deviceAgent.match(/(iphone|ipod|ipad|android)/);
+		if (agentID) {
+			viewModel.touchscreen(true);	 
+		}else{
+			viewModel.touchscreen(false);
+		}		
+});
+
+function cvpg_set_draggable_droppable(){
+		jQuery(".cpvg-field-draggable").draggable({
 			appendTo: "body",
 			helper: "clone"
 		});
@@ -646,4 +840,12 @@ jQuery(document).ready(function(){
 				viewModel.addFieldtypeOption(ui.draggable.attr('id'),ui.draggable.text());
 			}
 		});
-});
+}
+
+function convert_assoc_array(data){
+	var output = [];
+	for(var key in data){
+		output[output.length] = { 'key':key, 'value':data[key] };
+	}	
+	return output;
+}

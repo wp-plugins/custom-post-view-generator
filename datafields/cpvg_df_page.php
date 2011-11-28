@@ -13,7 +13,7 @@ class cpvg_df_page{
 									'guid'=>'Guid', 'post_password'=>'Password' , 'post_parent'=>'Parent ID' ));
     }
 
-	public function getValue($field_name,$post_data) {
+	public function getValue($field_name,$post_data,$custom_text) {
 		return $post_data->$field_name;
     }
 

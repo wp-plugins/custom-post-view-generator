@@ -4,7 +4,7 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view, list,
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable Tag: 0.2.2
+Stable Tag: 0.3.0
 
 Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
@@ -200,3 +200,11 @@ Fixed bug that caused and error on wp 3.3b2.
 Fixed bug that caused post excerpt not showing.
 Added two new fieldtypes.
 Added support for the Advanced Custom Fields plugin.
+
+= 0.3.0 =
+Fixed RTL align bug and minor fixes.
+Added support for touchscreens.
+Added sorting and paging options for list views.
+Added Misc field section with fields that allow the insertion of html code and other elements.
+
+

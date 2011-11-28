@@ -12,7 +12,6 @@ class cpvg_param_post{
 
 				$param_data['post']['mutiple_choices'] = array('post__in','post__not_in','post_status');
 
-				$param_data['post']['message'] = array("Message for post.");
 				$param_data['post']['message'] = array("When a multi select list is presented, the custom value field will accept a comma separed list of values.",
 													   "When a single select list is presented, the custom value field will treat the input text as a single value.",
 													   "When creating mutiple filters for this section, choose diferent a parameter for each filter.",

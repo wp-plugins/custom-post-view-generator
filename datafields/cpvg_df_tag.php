@@ -11,7 +11,7 @@ class cpvg_df_tag{
 
     }
 
-	public function getValue($field_name,$post_data) {
+	public function getValue($field_name,$post_data,$custom_text) {
 		$tags_data = get_the_tags($post_data->ID);
 		$result = array();
 

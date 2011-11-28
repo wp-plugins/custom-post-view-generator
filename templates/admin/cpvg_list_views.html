@@ -74,30 +74,30 @@
 				<tr><td>Value:</td><td>
 
 				<select	multiple=""
-							id='cvpg-multi-select-test'
-							class='cvpg-multi-select'
-							style="width:350px;"
-							data-bind="visible: getParamData('choices'),
-									   enable: !getParamData('select_input_value',true),
-									   options: getParamData('choices'),
-									   optionsText:'value',
-									   optionsValue:'key',
-									   optionsCaption: 'Choose a Option...',
-									   selectedOptions: getParamData('select_value')"></select>
-
-					<label data-bind="visible: getParamData('choices')">Custom Value:</label>
-					<input type="checkbox" data-bind="visible: getParamData('choices'), checked: getParamData('select_input_value')" />
-
-					<input 	class='cvpg-input-suggest'
-							data-bind="enable: !getParamData('choices') || getParamData('select_input_value'),
-									   value: getParamData('input_value')" />
+						class='cvpg-multi-select'
+						data-bind="visible: getParamData('choices'),
+								   enable: !getParamData('select_input_value',true),
+								   options: getParamData('choices'),
+								   optionsText:'value',
+								   optionsValue:'key',
+								   optionsCaption: 'Choose a Option...',
+								   selectedOptions: getParamData('select_value')"></select>
 				</td></tr>
-				<tr data-bind="visible: getParamData('types')"><td>Type:</td><td>
-					<select data-bind="options: getParamData('types'),
-									   optionsText:'value',
-									   optionsValue:'key',
-									   value: getParamData('type')"></select>
-				</td></tr>
+				<tr>
+					<td><label data-bind="visible: getParamData('choices')">Custom Value:</label></td>
+					<td><input type="checkbox" data-bind="visible: getParamData('choices'), checked: getParamData('select_input_value')" />
+						<input 	class='cvpg-input-suggest'
+								data-bind="enable: !getParamData('choices') || getParamData('select_input_value'),
+										   value: getParamData('input_value')" /></td>
+				</tr>
+				<tr data-bind="visible: getParamData('types')">
+					<td>Type:</td>
+					<td><select data-bind="options: getParamData('types'),
+										   optionsText:'value',
+										   optionsValue:'key',
+										   value: getParamData('type')"></select>
+					</td>
+				</tr>
 			</table>
 		</td>
 		<td id='cpvg_param_section_message' class='cpvg-rounded-border' data-bind="visible: selected_param.visible_form">

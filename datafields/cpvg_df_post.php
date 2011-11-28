@@ -13,7 +13,7 @@ class cpvg_df_post{
 									 'post_type'=>'Type', 'guid'=>'Post Url' , 'comment_count'=>'Comment count'));
     }
 
-	public function getValue($field_name,$post_data) {
+	public function getValue($field_name,$post_data,$custom_text) {
 		return $post_data->$field_name;
     }
 }

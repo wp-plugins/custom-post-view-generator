@@ -9,8 +9,12 @@
 </style>
 <?php
 	foreach($record_data as $record){
-		echo "<div class='cpvg-field'>";
-		echo "<span class='cpvg-field-name'>".$record['label']."</span>: <span class='cpvg-field-value'>".$record['value']."</span><br/>";
-		echo "</div>";
+		if(!isset($record['label'])){ //if there is no label then it is a heading or horizontal line or a similar element
+			echo $record['value'];
+		}else{
+			echo "<div class='cpvg-field'>";
+			echo "<span class='cpvg-field-name'>".$record['label']."</span>: <span class='cpvg-field-value'>".$record['value']."</span>";
+			echo "</div>";
+		}		
 	}
 ?>

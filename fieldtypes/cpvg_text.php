@@ -20,6 +20,7 @@ class cpvg_text{
     }
 
     public function processValue($value='NOT_SET',$output_options='',$additional_data) {
+		
 		if(is_string($value) && $value=='NOT_SET'){
 			return cpvg_random_text_value();
 		}else{

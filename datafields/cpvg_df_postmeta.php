@@ -15,7 +15,7 @@ class cpvg_df_postmeta{
 		return $result;
     }
 
-	public function getValue($field_name,$post_data){
+	public function getValue($field_name,$post_data,$custom_text){
 		return get_post_meta($post_data->ID, $field_name,true);
     }
 }

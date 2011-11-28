@@ -4,11 +4,18 @@ RECORD DATA ARRAY:
 RECORD DATA FIELDS:
 	value, name, label, type, options1, options2, options3, options4,...,options_n
 
+NOTES:
+	if the record has no label, then it is custom text, heading or similar field
+
 BASIC TEMPLATE:
 
 <?php
 	foreach($record_data as $record){
-		echo $record['label'].":".$record['value']."<br/>";
+		if(!isset($record['label'])){ 
+			echo $record['value'];
+		}else{
+			echo $record['label'].":".$record['value']."<br/>";
+		}
 	}
 ?>
 
