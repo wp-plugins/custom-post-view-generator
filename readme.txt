@@ -4,7 +4,7 @@ Contributors: Marco Constâncio
 Tags: custom field, custom post, view, list,
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable Tag: 0.3.0
+Stable Tag: trunk
 
 Creates views allowing the user to display of data of custom post type fields and other wordpress fields without the any theme modification.
 
@@ -18,7 +18,7 @@ This plugin will use custom fields that are created in the wordpress page/post a
 
 * **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/)
 * **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/)
-* **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/), so this it will only work in conjuction with one these plugins.
+* **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/)
 * **Advanced Custom Fields** by Elliot Condon (http://http://plugins.elliotcondon.com/advanced-custom-fields/)
 
 PLEASE READ THE Frequently Asked Questions AND Fields Info FOR MORE DETAILED INFORMATION.
