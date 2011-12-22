@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.3.0
+Version: 0.3.1
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -752,9 +752,11 @@ function cpvg_save_layout(){
 			//check_database($db_data['table_name']);
 
 			$cpvg_id = $wpdb->get_var("SELECT id FROM ".$db_data['table_name']." WHERE ".$db_data['access_field']." = '".$_POST['view_value']."'");
-
+			$processed_data = str_replace(array("\\\'"),array("'"),json_encode($layout_data));
+			
 			if($cpvg_id){
-				$rows_affected = $wpdb->update($db_data['table_name'],array($db_data['options_field'] => json_encode($layout_data)),
+				
+				$rows_affected = $wpdb->update($db_data['table_name'],array($db_data['options_field'] => $processed_data),
 																	  array('id'=>$cpvg_id));
 
 				if(isset($_POST['new_view_value'])){
@@ -769,7 +771,7 @@ function cpvg_save_layout(){
 				}
 
 				$rows_affected = $wpdb->insert($db_data['table_name'],array($db_data['name_field'] => $_POST['view_value'],
-																			$db_data['options_field'] => json_encode($layout_data)));
+																			$db_data['options_field'] => $processed_data));
 				print "Layout Saved.";
 			}
 		}else{

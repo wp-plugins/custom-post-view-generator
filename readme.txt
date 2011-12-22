@@ -207,4 +207,7 @@ Added support for touchscreens.
 Added sorting and paging options for list views.
 Added Misc field section with fields that allow the insertion of html code and other elements.
 
+= 0.3.1 =
+Modification that allows single quotes in html fields on post views.
+
 
