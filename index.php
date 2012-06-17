@@ -66,7 +66,7 @@ if (is_admin()){
 	add_action('admin_menu', 'cpvg_menu_pages');
 		
 	//JS
-	wp_register_script('cpvg_functions', CPVG_PLUGIN_URL . 'cpvg_functions.js', false, null);
+	wp_register_script('cpvg_functions', CPVG_PLUGIN_URL . 'cpvg_functions.min.js', false, null);
 	wp_register_script('cpvg_flowplayer', CPVG_PLUGIN_URL . 'libs/flowplayer/flowplayer-3.2.6.min.js', false, null);
 	wp_register_script('cpvg_jquery_tmpl', CPVG_PLUGIN_URL . 'libs/knockoutjs/jquery.tmpl.min.js', false, null);
 	wp_register_script('cpvg_knockout', CPVG_PLUGIN_URL . 'libs/knockoutjs/knockout-latest.js', false, null);
