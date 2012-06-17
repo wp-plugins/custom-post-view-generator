@@ -210,4 +210,7 @@ Added Misc field section with fields that allow the insertion of html code and o
 = 0.3.1 =
 Modification that allows single quotes in html fields on post views.
 
+= 0.3.2 =
+Fix for wordpress 3.4.
+
 

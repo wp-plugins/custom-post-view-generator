@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.3.1
+Version: 0.3.2
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -49,12 +49,24 @@ register_deactivation_hook(CPVG_PLUGIN_DIR.'/index.php','cpvg_deactivation');
 //require by some functions to be loaded here
 cpvg_load_fieldtypes();
 
+//FIX FOR WORDPRESS 3.4
+add_action('wp_head', 'load_scripts'); // to load jquery on the font page
+add_action('admin_head', 'load_scripts'); // to load jquery on the admin page
+function load_scripts(){
+	wp_enqueue_script('jquery');
+	wp_enqueue_script('jquery-ui');
+	wp_enqueue_script('jquery-ui-draggable');
+	wp_enqueue_script('jquery-ui-droppable');
+	wp_enqueue_script('jquery-ui-sortable');
+	wp_enqueue_script('jquery-ui-dialog');
+}
+
 if (is_admin()){
 	//ADMIN LINKS
 	add_action('admin_menu', 'cpvg_menu_pages');
 		
 	//JS
-	wp_register_script('cpvg_functions', CPVG_PLUGIN_URL . 'cpvg_functions.min.js', false, null);
+	wp_register_script('cpvg_functions', CPVG_PLUGIN_URL . 'cpvg_functions.js', false, null);
 	wp_register_script('cpvg_flowplayer', CPVG_PLUGIN_URL . 'libs/flowplayer/flowplayer-3.2.6.min.js', false, null);
 	wp_register_script('cpvg_jquery_tmpl', CPVG_PLUGIN_URL . 'libs/knockoutjs/jquery.tmpl.min.js', false, null);
 	wp_register_script('cpvg_knockout', CPVG_PLUGIN_URL . 'libs/knockoutjs/knockout-latest.js', false, null);
