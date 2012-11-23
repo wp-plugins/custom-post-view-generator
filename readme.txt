@@ -226,3 +226,6 @@ Added pagination support for list views (depends of the template).
 Added user sorting support for list views (depends of the template).
 Added suport to use the post featured image.
 Several code fixes.
+
+= 0.4.1 =
+Small fix.
