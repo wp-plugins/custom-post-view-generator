@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.4.0
+Version: 0.4.1
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
