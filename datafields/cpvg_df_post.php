@@ -7,10 +7,11 @@ class cpvg_df_post{
 		'post_modified','post_modified_gmt','post_content_filtered','guid','menu_order',
 		'post_type','post_mime_type','comment_count','ancestors','filter'
 		*/
-		return array('post' => array('ID'=>'ID', 'post_title'=>'Title', 'post_name'=>'Name', 'post_author'=>'Author Id',
+		$fields = array('post' => array('ID'=>'ID', 'post_title'=>'Title', 'post_name'=>'Name', 'post_author'=>'Author Id',
 									 'post_status'=>'Status', 'post_excerpt'=>'Post Excerpt', 'post_content'=>'Content',
 									 'post_date'=>'Creation Date', 'post_modified'=>'Last modified', 'comment_status'=>'Comment Status',
-									 'post_type'=>'Type', 'guid'=>'Post Url' , 'comment_count'=>'Comment count'));
+									 'post_type'=>'Type', 'guid'=>'Post Url' , 'comment_count'=>'Comment count','_thumbnail_id'=>'Thumbnail ID'));
+		return $fields;
     }
 
 	public function getValue($field_name,$post_data,$custom_text) {

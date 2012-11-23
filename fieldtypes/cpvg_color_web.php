@@ -22,7 +22,7 @@ class cpvg_color_web{
 		//$output_options[1] -> color display from $output_options1
 		switch($output_options[1]){
 			case 'square':
-				return "<div style='width:20px; height:20px; display:inline; background-color:#".$value.";'>&nbsp;&nbsp;&nbsp;&nbsp;</div>";
+				return "<div style='width:20px; height:20px; display:inline; background-color:#".$value.";margin:0px;padding:0px;'>&nbsp;&nbsp;&nbsp;&nbsp;</div>";
 				break;
 			case 'hexvalue':
 				return "#".$value;

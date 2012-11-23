@@ -16,7 +16,7 @@ The plugin allows administrator the ability to create views by simply selecting 
 
 This plugin will use custom fields that are created in the wordpress page/post admin page and with fields created with the following plugins:
 
-* **Content Types** By Brian S. Reed (http://www.scottreeddesign.com/)
+* **Reed Write** By Brian S. Reed (http://www.scottreeddesign.com/)
 * **Custom Content Type Manager** By Everett Griffiths (http://code.google.com/p/wordpress-custom-content-type-manager/)
 * **Ultimate Post Type Manager** by XYDAC (http://posttypemanager.wordpress.com/)
 * **Advanced Custom Fields** by Elliot Condon (http://http://plugins.elliotcondon.com/advanced-custom-fields/)
@@ -29,6 +29,7 @@ PLEASE READ THE Frequently Asked Questions AND Fields Info FOR MORE DETAILED INF
 custom-post-view-generator.zip to the '/wp-content/plugins/' directory
 or by using the 'Add New' in 'Plugins' menu in WordPress
 1. Activate the plugin through the 'Plugins' menu in WordPress
+1. It is RECOMENDED that you delete you previous views and remake them to avoid compatibility issues.
 
 = Instructions =
 
@@ -38,7 +39,7 @@ POST VIEWS:
 1. Go to 'Page Views' on the 'CTP View Generator'
 1. Select a post yype in the top drop-down box **Post type** and drag the a desired field on **Available fields** area to the left side.
 1. After dragging the field, a grey box will be displayed allowing to setup the display properties of that field. Write the desired label for that custom field, select the appropriate type (you can either test each one, or check the *Fields Info* section in **Other Notes** page), select available output options and press **Save Layout**.
-1.  OPTIONAL: You can also change the field order by dragging the grey box(es) up and down and even select a diferent view template on the **Template** drop-down box and press **Save Layout** to save the changes.
+1. OPTIONAL: You can also change the field order by dragging the grey box(es) up and down and even select a diferent view template on the **Template** drop-down box and press **Save Layout** to save the changes
 
 LIST VIEWS:
 
@@ -84,7 +85,7 @@ If you are familiar the custom post type/fields plugin that you are using or you
 
 == Fields Info ==
 
-When selecting wich custom fields are going to be displayed, you need to select the appropriate type. Here is a list of the custom fields created by wordpress and the recomended plugins and their appropriate types in this plugin. NOTE: plugins that add custom fields to the wordpress posts/pages store the data in the POSTMETA table, so check that section.
+When selecting wich custom fields are going to be displayed, you need to select the appropriate type. Here is a list of the custom fields created by wordpress and the recomended plugins and their appropriate types in this plugin. NOTE1: plugins that add custom fields to the wordpress posts/pages usually store the data in the POSTMETA table, so check that section. NOTE2: Some plugins store data from custom fields differently depending on options selected by the admin in the plugins option page, so it might be necessary to try other types on this plugin.
 
 = Wordpress Fields =
 
@@ -94,6 +95,7 @@ POST, PAGE:
 * **Author Id** - Wordpress User ID, text
 * **Creation Date, Last modified** - Date, text
 * **Post Url** - Hyperlink, text
+* **Thumbnail ID** - Image (Wordpress Attachment)
 
 USER:
 
@@ -116,7 +118,7 @@ POSTMETA, TAXONOMY:
 
 * **All Fields** - Depends how the values where stored.
 
-= Content Types By Brian S. Reed =
+= Reed Write By Brian S. Reed =
 
 * **Checkboxes** - Mutiple Values (Serialized)
 * **Single Line of Text** - Text
@@ -126,6 +128,7 @@ POSTMETA, TAXONOMY:
 * **Select Multiple** - Mutiple Values (Vertical Bar)
 * **Select an Image** - Image(s) (Wordpress Attachment)
 * **Select a Color** - Color (Web)
+* **Select a Pdf** - Wordpress Attachment ID(s)
 
 = Custom Content Type Manager By Everett Griffiths =
 
@@ -137,6 +140,7 @@ POSTMETA, TAXONOMY:
 * **Media Field** - Wordpress Attachment ID(s), Image (Wordpress Attachment), Audio, Video
 * **Multiselect** - Multiple Values (JSON)
 * **Relation** - Wordpress Attachment ID(s)
+* **User** - Worpress User ID
 * **Text** - Text
 * **TextArea** - Text
 * **Wysiwyg** - Text
@@ -155,10 +159,11 @@ POSTMETA, TAXONOMY:
 
 = Advanced Custom Fields by Elliot Condon =
 
-* **Checkbox** - Multiple Values (Array)
-* **Date** - Text
+* **Checkbox** - Multiple Values (Serialized)
+* **Date** - Datw
 * **File** - Wordpress Attachment ID(s), Image(s) (Wordpress Attachment)
 * **Image** - Image(s) (Wordpress Attachment)
+* **Number** - Text 
 * **Page Link** - Wordpress Post/Page ID
 * **Post Object** - Wordpress Post/Page ID
 * **Radio Button** - Text
@@ -213,4 +218,11 @@ Modification that allows single quotes in html fields on post views.
 = 0.3.2 =
 Fix for wordpress 3.4.
 
-
+= 0.4.0 =
+Replaced Content Types code with code to support Reed Write plugin.
+Updated support for the newer versions of Advanced Custom Fields.
+Added several templates.
+Added pagination support for list views (depends of the template).
+Added user sorting support for list views (depends of the template).
+Added suport to use the post featured image.
+Several code fixes.

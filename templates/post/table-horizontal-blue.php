@@ -4,19 +4,21 @@
 		border: 1px solid #8CACBB;
 		border-collapse: collapse;
 	}
-
 	.cpvg-table td {
-		border: 1px solid #DEE7EC;
+		border: 1px solid #8CACBB;
 		padding: 2px;
+	}
+	.cpvg-table tr {
+		border: 1px solid #8CACBB;
 	}
 	.cpvg-table th {
 		border: 1px solid #8CACBB;
 		background-color: #DEE7EC;
+		padding: 2px;		
 	}
 	.cpvg-table td ul {
-		/*padding:0px;
-		margin:0px 0px 0px 20px;*/
-	}
+		border: 1px solid #8CACBB;
+	}	
 </style>
 
 <?php	

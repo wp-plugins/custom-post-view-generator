@@ -15,20 +15,7 @@ class cpvg_df_category{
 		$result = array();
 		$category_data = array();
 
-		//if($post_data->post_type == 'post' || $post_data->post_type == 'page'){
-			$category_data = wp_get_post_categories($post_data->ID);
-		/*}else{
-			$pluginfiles = cpvg_get_pluginscode_files();
-
-			foreach($pluginfiles as $pluginfile_name){
-				include_once CPVG_PLUGINSCODE_DIR."/".$pluginfile_name.".php";
-				$pluginfile_object = new $pluginfile_name();
-
-				if ($pluginfile_object->isEnabled()) {
-					$category_data = $pluginfile_object->getCategories($post_data);
-				}
-			}
-		}*/
+		$category_data = wp_get_post_categories($post_data->ID);
 		if(is_array($category_data)){
 			foreach($category_data as $c){
 				$cat = get_category( $c );

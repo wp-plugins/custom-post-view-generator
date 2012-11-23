@@ -26,9 +26,9 @@ class cpvg_text{
 		}else{
 
 			$return_value = $value;
-			//REQUIRED CODE TO DELIVER NON SANATIZED VALUES SAVED BY THE Content Types plugin by iambriansreed (WHEN USED)
-			if(isset($additional_data['content_types_plugin_data'][$value])){
-				$return_value = $additional_data['content_types_plugin_data'][$value];
+			//REQUIRED CODE TO DELIVER NON SANATIZED VALUES SAVED BY THE reed write by iambriansreed (WHEN USED)
+			if(isset($additional_data['reed_write_plugin_data'][$value])){
+				$return_value = $additional_data['reed_write_plugin_data'][$value];
 			}
 
 			if($output_options[2] != 'no_modification' && $output_options[2] != NULL){

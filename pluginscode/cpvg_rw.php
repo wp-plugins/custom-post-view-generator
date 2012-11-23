@@ -1,18 +1,18 @@
 <?php
-class cpvg_ct{
+class cpvg_rw{
     public function isEnabled(){
-		return in_array("content-types-wordpress-plugin/content-types-wordpress-plugin.php",get_option("active_plugins"));
+		return in_array("reed-write/reed-write.php",get_option("active_plugins"));
     }
 
 	public function getCustomfields($custom_post_type){
 		global $wpdb;
 		$custom_fields_data = array();
 		$custom_post_data=get_post_types(array('_builtin'=>false),'object');
-
+		
 		if(!empty($custom_post_data)){
 			$custom_post_name = $custom_post_data[$custom_post_type]->labels->name;
-
-			$cpt_post_id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '".$custom_post_name."' AND post_type = 'content-type'");
+			
+			$cpt_post_id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '".$custom_post_name."' AND post_type = 'rw_content_type'");
 
 			if(!is_null($cpt_post_id)){
 				$custom_fields = get_post_meta($cpt_post_id,"fields",false);
@@ -38,7 +38,7 @@ class cpvg_ct{
 			$plural_type_name = $custom_post_data[$singular_type_name]->labels->name;
 
 			global $wpdb;
-			$cpt_post_id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '".$plural_type_name."' AND post_type = 'content-type'");
+			$cpt_post_id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '".$plural_type_name."' AND post_type = 'rw_content_type'");
 
 			if(isset($cpt_post_id)){
 				$post_meta_data = get_post_meta($cpt_post_id,'fields');
@@ -59,7 +59,7 @@ class cpvg_ct{
 
 						foreach($data['fields'] as $data_field_idx => $data_field_value){
 							if($data_field_value['name'] == $field_data['name'] && !is_null($unsanitized_values)){
-								$data['fields'][$data_field_idx]['additional_data']['content_types_plugin_data'] = $unsanitized_values;
+								$data['fields'][$data_field_idx]['additional_data']['reed_write_plugin_data'] = $unsanitized_values;
 							}
 						}
 					}
@@ -67,6 +67,7 @@ class cpvg_ct{
 
 			}
 		}
+
 		return $data;
 	}
 	public function getCategories($post_data){

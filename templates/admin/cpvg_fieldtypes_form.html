@@ -70,8 +70,9 @@
 				{{/each}}			
 			{{/if}}
 			
+
 			{{each(section_index, section) viewModel.available_custom_fields.field_sections}}
-				<div id='${section}-fieldgroup' class='cpvg-fieldgroup' data-bind='visible: section == selected_field_section()'>
+				<div id='${section}-fieldgroup' class='cpvg-fieldgroup' data-bind="visible: section == selected_field_section()">
 					{{each(field_index, field) viewModel.available_custom_fields[section]}}
 						<div id='${section}.${field}' class='cpvg-field-draggable'>${field}</div>
 					{{/each}}

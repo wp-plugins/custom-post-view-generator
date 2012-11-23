@@ -1,9 +1,9 @@
 <style type="text/css">
 	/* TEMPLATE CSS */	
-	.cpvg-table{ margin-top:10px;border: 1px solid #BFBFBF;border-collapse: collapse; }
-	.cpvg-table td { border: 1px solid #BFBFBF;padding: 2px;	}
-	.cpvg-table th { border: 1px solid #BFBFBF;background-color: #1A1A1A; }
-	.cpvg-table td ul { /*padding:0px;margin:0px 0px 0px 20px;*/ }
+	.cpvg-table{ margin-top:10px; border: 1px solid #BFBFBF;border-collapse: collapse; }
+	.cpvg-table td { border: 1px solid #BFBFBF;padding: 2px; 	}
+	.cpvg-table th { border: 1px solid #BFBFBF;background-color: #1A1A1A; padding: 2px; width:30%; }
+	.cpvg-table td ul { }
 	.cpvg-table .cpvg-table-blank{ border-left: 1px solid #FFFFFF;border-right: 1px solid #FFFFFF; }
 
 	/* PAGINATION CSS */

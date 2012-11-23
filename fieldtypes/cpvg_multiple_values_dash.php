@@ -20,10 +20,10 @@ class cpvg_multiple_values_dash{
 		}
 
 		if(is_array($values)){
-			//REQUIRED CODE TO DELIVER NON SANATIZED VALUES SAVED BY THE Content Types plugin by iambriansreed (WHEN USED)
-			if($additional_data['content_types_plugin_data']){
+			//REQUIRED CODE TO DELIVER NON SANATIZED VALUES SAVED BY THE reed write plugin by iambriansreed (WHEN USED)
+			if($additional_data['reed_write_plugin_data']){
 				foreach($values as $idx => $value){
-					$values[$idx] = $additional_data['content_types_plugin_data'][$value];
+					$values[$idx] = $additional_data['reed_write_plugin_data'][$value];
 				}
 			}
 

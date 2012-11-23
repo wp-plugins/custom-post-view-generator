@@ -1,14 +1,14 @@
 <style type="text/css">
 	/* TEMPLATE CSS */		
-	.cpvg-record-div{ padding:5px; margin-bottom:5px; border: 1px solid #8CACBB; background-color: #DEE7EC; -webkit-background-size: 100%; -o-background-size: 100%; -khtml-background-size: 100%; -moz-border-radius: 8px; -webkit-border-radius: 8px; }
-	#content .cpvg-table{ margin:0px;padding:0px; }
-	#content .cpvg-table tr th{ padding: 0px;width: 20%; }
-	#content .cpvg-table tr td{ padding: 0px; }
-
+	.cpvg-record-div{ background-color: #DEE7EC; -moz-border-radius: 8px;  -webkit-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; }
+	.cpvg-record-div .cpvg-table{ border:0px; padding:5px; margin-top:5px; margin-bottom:8px; }    
+	.cpvg-table td{ border:0px; color: #636363;}
+	.cpvg-table th{ width: 30%; color: #1A1A1A; }
+    
 	/* PAGINATION CSS */
-	.pager{ font-family: "Bitstream Cyberbit","MS Georgia","Times New Roman",Bodoni,Garamond,"Minion Web","ITC Stone Serif","Helvetica";		-webkit-background-size: 100%;-o-background-size: 100%;-khtml-background-size: 100%;-moz-border-radius: 8px;-webkit-border-radius: 8px;height: 32px;padding: 0;margin: 0;padding-top: 5px;padding-left: 3px; }
+	.pager{ font-family: "Bitstream Cyberbit","MS Georgia","Times New Roman",Bodoni,Garamond,"Minion Web","ITC Stone Serif","Helvetica"; -webkit-background-size: 100%;-o-background-size: 100%;-khtml-background-size: 100%;-moz-border-radius: 8px;-webkit-border-radius: 8px;height: 32px;padding: 0;margin: 0 0 10px 0;padding-top: 5px;padding-left: 3px; }
 	.pager div.short{ float: right;margin: 0;padding: 0;margin-right: 10px;width: 74px; }
-	.pager div.short input{ width: 28px;height: 20px;8CACBBborder: none;float: left; }
+	.pager div.short input{ width: 28px;height: 20px; border: none;float: left; }
 	.pager ul{ list-style: none;padding: 0;margin: 0;float: left;margin-right: 4px; }
 	.pager ul li{ display: inline;margin-left: 2px; }
 	.pager ul li a.normal{ text-decoration: none;display: inline-table;width: 20px;height: 20px;text-align: center;border-radius: 4px;-moz-border-radius: 4px; }
@@ -18,10 +18,10 @@
 	.pager ul li a.active{ text-decoration: none;display: inline-table;width: 20px;height: 20px;text-align: center;border-radius: 4px;-moz-border-radius: 4px; }
 
 	/* PAGINATION THEME CSS */
-	.themecolor{ background-color: #DEE7EC;border: 1px solid #8CACBB;margin-bottom: 3px; }
-	.themecolor.normal{ background-color: #95BACF;color: White;border: solid 1px #8CACBB; }
-	.themecolor.active{ background-color: #5B839A;color: #BFBFBF;border: solid 1px #8CACBB; }
-	.pager.themecolor .btn{ background-color: #95BACF;color: White;border: solid 1px #8CACBB; }
+	.themecolor{ background-color:#DEE7EC; -moz-border-radius: 8px;  -webkit-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px; }
+	.themecolor.normal{ background-color:#95BACF; color:White; border:solid 1px #8CACBB; }
+	.themecolor.active{ background-color:#5B839A; color:#BFBFBF; border:solid 1px #8CACBB; }
+	.pager.themecolor .btn{ height:27px; background-color:#95BACF; color:White; border:solid 1px #8CACBB; }
 </style>
 
 <script type='text/javascript'>

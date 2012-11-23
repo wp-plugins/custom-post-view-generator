@@ -9,7 +9,7 @@ class cpvg_param_pagination{
 			
 			$param_data['pagination']['choices'] = array();
 
-			$param_data['pagination']['message'] = array("When creating mutiple order parameters for this section, choose diferent a parameter for each filter.");		
+			$param_data['pagination']['message'] = array("Create only one pagination parameter for each list.");		
 			
 			$param_data['pagination']['choices']['posts_per_page'] = array(	 '1'=>'1 Posts', '2'=>'2 Posts', '3'=>'3 Posts', '4'=>'4 Posts', '5'=>'5 Posts',
 																			 '6'=>'6 Posts', '7'=>'7 Posts', '8'=>'8 Posts', '9'=>'9 Posts',

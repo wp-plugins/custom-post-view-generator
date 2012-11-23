@@ -187,22 +187,24 @@ var viewModel = {
 	current_fieldtype_options: ko.observableArray([]),
 	
 	temp_data: {},
+	acf_enabled: true,
 	//selected_field_custom_text: new fieldtype_option("section.fieldname","label"),
 
 	//LIST VIEWS
 	available_listviews_names: ko.observableArray([]),
 	selected_list: { 'id' : ko.observable('') , 'name' : ko.observable(''), 'original_name' : '', 'template':ko.observable(), 'index': ko.observable(-1) },
 
-	available_param_names: [{'value':'filter','text':'Filters' } , { 'value':'order','text':'Sorting' },
-							{  'value':'pagination','text':'Pagination' }],
-	available_param_data: { 'filter':'', 'order':'','pagination':'' },
+	available_param_names: [{'value':'filter','text':'Filters' } , { 'value':'order','text':'Order' },
+							{'value':'pagination','text':'Pagination' }, {'value':'usersorting','text':'User Sorting' }],
+	available_param_data: { 'filter':'', 'order':'','pagination':'','usersorting':'' },
 
 	selected_param: { 'type': ko.observable('filter'), 'index': ko.observable(0), 'item':'', 'visible_form':ko.observable(false) },
 
 	current_params: {
 		'order': ko.observableArray([]),
 		'filter': ko.observableArray([]),
-		'pagination': ko.observableArray([])
+		'pagination': ko.observableArray([]),
+		'usersorting': ko.observableArray([])
 	},
 	post_page_name: ko.observable('Insert name for page/post'),
 	/*SERVER/ACTION FUNCTIONS*/
@@ -290,6 +292,9 @@ var viewModel = {
 			return this.available_fields.field_sections;
 		}else{
 			if(jQuery.inArray(this.selected_post_type(),this.available_fields.field_sections) > -1){
+				if(this.acf_enabled == "true"){
+					return jQuery.merge(jQuery.merge([],this.available_fields.field_sections), ['acf']);
+				}
 				return this.available_fields.field_sections;
 			}else{
 				return jQuery.merge(jQuery.merge([],this.available_fields.field_sections), [this.selected_post_type()]);
@@ -410,7 +415,6 @@ var viewModel = {
 		}
 
 		var send_data = this.removeUnecessarySendData(ko.toJS(temp_data));
-		//console.log(send_data);
 
 		jQuery.post(this.siteurl+"/wp-admin/admin-ajax.php",send_data,
 		   function(response){
@@ -509,7 +513,9 @@ var viewModel = {
 							param = new basic_param(config_data['param'][param_name][param_key]);
 						}else if(param_name == 'pagination'){
 							param = new basic_param(config_data['param'][param_name][param_key]);
-						}else{
+						}else if(param_name == 'usersorting'){
+							param = new basic_param(config_data['param'][param_name][param_key]);
+						}else{							
 							//TODO LATER WHEN NEW OPTIONS ARE ADDED
 						}
 						this.current_params[param_name].push(param);
@@ -633,9 +639,10 @@ var viewModel = {
 					}
 				}else{
 					for(var value_key in paramData[section_key][var_key]){
-
 						if(typeof(paramData[section_key][var_key][value_key]) == 'object'){ // CHOICES
-							if(typeof(sdata['choices'][section_key]) == 'undefined'){
+							
+							if(typeof(sdata['choices'][section_key]) == 'undefined'){ 
+
 								sdata['choices'][section_key] = { };
 							}
 							if(typeof(sdata['choices'][section_key][value_key]) == 'undefined'){
@@ -695,6 +702,7 @@ var viewModel = {
 			var curr_section = this.getParamData('section');
 			var curr_param = this.getParamData('parameter');
 
+
 			if (typeof(this.available_param_data[curr_type]['choices']) != 'undefined' &&
 				typeof(curr_section) != 'undefined' &&
 				typeof(curr_param) != 'undefined' &&
@@ -707,7 +715,6 @@ var viewModel = {
 							jQuery('.cvpg-multi-select').removeAttr('multiple');
 						}
 					}
-					
 					return this.available_param_data[curr_type]['choices'][curr_section()][curr_param()];
 			}
 			break;
@@ -736,9 +743,9 @@ var viewModel = {
 		}else{
 			//add + select
 			var new_item = '';
-			if(this.selected_param.type() == 'filter' || this.selected_param.type() == 'order' || this.selected_param.type() == 'pagination'  ){
+			if(this.selected_param.type() == 'filter' || this.selected_param.type() == 'order' || this.selected_param.type() == 'pagination' || this.selected_param.type() == 'usersorting'  ){
 				new_item = new basic_param({ 'name': this.selected_param.type() + new Date().getTime()});
-			}else {
+			}else{
 				//new_item = new basic_param({ 'name': this.selected_param.type() + new Date().getTime()});
 			}
 			this.current_params[this.selected_param.type()].push(new_item);

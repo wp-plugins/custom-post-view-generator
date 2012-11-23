@@ -26,16 +26,10 @@ class cpvg_df_tag{
 
 	public function getParameterData($type='filter') {
 		$param_data = array();
-/*$posttags = get_tags();
-if ($posttags) {
-  foreach($posttags as $tag) {
-    echo $tag->name . ' ';
-  }
-}*/
+
 		switch($type){
 			case 'filter':
 				$param_data['tag']['fields'] = array('tag_id'=>'Tag ID', 'tag__and'=>'Tag IDs (AND)', 'tag__in'=>'Tag IDs (OR)', 'tag__not_in'=>'Tag IDs (NOT IN)');
-				//$param_data['tag']['choices'] = array('tag'=>array());
 				$param_data['tag']['message'] = 'Message for tag.';
 
 				$tags_data = get_tags();
