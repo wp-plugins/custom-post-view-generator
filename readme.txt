@@ -139,7 +139,7 @@ POSTMETA, TAXONOMY:
 * **Image** - Image(s) (Wordpress Attachment)
 * **Media Field** - Wordpress Attachment ID(s), Image (Wordpress Attachment), Audio, Video
 * **Multiselect** - Multiple Values (JSON)
-* **Relation** - Wordpress Attachment ID(s)
+* **Relation** - Wordpress Attachment ID(s),
 * **User** - Worpress User ID
 * **Text** - Text
 * **TextArea** - Text
@@ -167,7 +167,7 @@ POSTMETA, TAXONOMY:
 * **Page Link** - Wordpress Post/Page ID
 * **Post Object** - Wordpress Post/Page ID
 * **Radio Button** - Text
-* **Relationship** - Wordpress Post/Page ID(s) (Comma)
+* **Relationship** - Wordpress Post/Page ID(s), Wordpress Post/Page ID(s) (Serialized) 
 * **Select** - Text
 * **Select (Multiple Values)** - Multiple Values (Array)
 * **Text** - Text
@@ -229,3 +229,8 @@ Several code fixes.
 
 = 0.4.1 =
 Small fix.
+
+= 0.4.2 =
+Small fixes to remove notices.
+Disable function that modified the excerpt.
+Added serialized wordpress attachment fieldtype.

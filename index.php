@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.4.1
+Version: 0.4.2
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -51,9 +51,14 @@ cpvg_load_fieldtypes();
 
 //FIX FOR WORDPRESS 3.4
 add_action('wp_head', 'load_scripts'); // to load jquery on the font page
-add_action('admin_head', 'load_scripts'); // to load jquery on the admin page
+add_action('admin_head', 'load_admin_scripts'); // to load jquery on the admin page
+
 function load_scripts(){
 	wp_enqueue_script('jquery');
+}
+
+function load_admin_scripts(){
+	load_scripts();
 	wp_enqueue_script('jquery-ui');
 	wp_enqueue_script('jquery-ui-draggable');
 	wp_enqueue_script('jquery-ui-droppable');
@@ -98,7 +103,9 @@ if (is_admin()){
 		
 	//USED IN POST VIEWS
 	add_filter('the_content', 'cpvg_process_page',-999);
-	add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
+
+	//IF THE YOU ARE GETTING GARBAGE ON POST LISTING UNCOMMENT THE NEXT LINE
+	//add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
 
 	//USED IN LIST VIEWS
 	add_shortcode('cpvg_list ', 'cpvg_process_list');
@@ -372,7 +379,8 @@ function cpvg_get_pluginscode_files(){
 
 	if ($handle = opendir(CPVG_PLUGINSCODE_DIR)) {
 		while (false !== ($file = readdir($handle))) {
-			if(end(explode(".", $file)) == "php") {
+			$explode_result = explode(".", $file);
+			if(end($explode_result) == "php") {
 				$files[] = preg_replace("/\\.[^.\\s]{3,4}$/", "", str_replace($find_strings,$replace_strings,$file));
 			}
 		}
@@ -512,11 +520,11 @@ function cpvg_process_list($params){
 			}
 		}
 	
-		if($query_args['posts_per_page']){
+		if(isset($query_args['posts_per_page'])){
 			$pagination = $query_args['posts_per_page'];
 			$query_args = array_diff_assoc($query_args,array('posts_per_page'=>$query_args['posts_per_page']));
 		}
-		if($query_args['usersorting_choice']){
+		if(isset($query_args['usersorting_choice'])){
 			$usersorting = $query_args['usersorting_choice'];
 			$query_args = array_diff_assoc($query_args,array('usersorting_choice'=>$query_args['usersorting_choice']));
 		}		
