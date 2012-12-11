@@ -108,7 +108,7 @@ if (is_admin()){
 	//add_filter('the_excerpt', 'cpvg_process_excerpt',-999);
 
 	//USED IN LIST VIEWS
-	add_shortcode('cpvg_list ', 'cpvg_process_list');
+	add_shortcode('cpvg_list', 'cpvg_process_list');
 }
 
 /*

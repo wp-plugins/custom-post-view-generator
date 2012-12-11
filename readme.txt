@@ -237,3 +237,6 @@ Added serialized wordpress attachment fieldtype.
 
 = 0.4.3 =
 Fix to the code that removed the read more link.
+
+= 0.4.4 =
+Fix for list views in wordpress 3.5.
