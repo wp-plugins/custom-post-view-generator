@@ -234,3 +234,6 @@ Small fix.
 Small fixes to remove notices.
 Disable function that modified the excerpt.
 Added serialized wordpress attachment fieldtype.
+
+= 0.4.3 =
+Fix to the code that removed the read more link.

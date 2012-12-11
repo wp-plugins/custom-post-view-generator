@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.4.2
+Version: 0.4.3
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -614,7 +614,8 @@ function cpvg_process_page(){
 											    WHERE ".$db_data['name_field']." = '".$post->post_type."'");
 
 	if(empty($custom_post_type_options)){
-		return $post->post_content;
+		$content = get_the_content('Read more');
+		return $content;
 	}else{
 		$data = json_decode($custom_post_type_options,true);
 		$data['field_data'] = get_post_custom($post->ID);
