@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.4.3
+Version: 0.4.5
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -50,14 +50,14 @@ register_deactivation_hook(CPVG_PLUGIN_DIR.'/index.php','cpvg_deactivation');
 cpvg_load_fieldtypes();
 
 //FIX FOR WORDPRESS 3.4
-add_action('wp_head', 'load_scripts'); // to load jquery on the font page
-add_action('admin_head', 'load_admin_scripts'); // to load jquery on the admin page
+add_action('wp_head', 'cpvg_load_scripts'); // to load jquery on the font page
+add_action('admin_head', 'cpvg_load_admin_scripts'); // to load jquery on the admin page
 
-function load_scripts(){
+function cpvg_load_scripts(){
 	wp_enqueue_script('jquery');
 }
 
-function load_admin_scripts(){
+function cpvg_load_admin_scripts(){
 	load_scripts();
 	wp_enqueue_script('jquery-ui');
 	wp_enqueue_script('jquery-ui-draggable');

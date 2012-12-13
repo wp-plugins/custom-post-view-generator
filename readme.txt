@@ -240,3 +240,6 @@ Fix to the code that removed the read more link.
 
 = 0.4.4 =
 Fix for list views in wordpress 3.5.
+
+= 0.4.5 =
+Fix for load_scripts fatal error.
