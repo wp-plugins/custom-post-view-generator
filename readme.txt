@@ -243,3 +243,6 @@ Fix for list views in wordpress 3.5.
 
 = 0.4.5 =
 Fix for load_scripts fatal error.
+
+= 0.4.6 =
+Fix for fatal error.

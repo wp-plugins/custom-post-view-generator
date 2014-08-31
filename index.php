@@ -3,7 +3,7 @@
 Plugin Name: Custom Post Type View Generator
 Plugin URI:
 Description:
-Version: 0.4.5
+Version: 0.4.6
 Author: Marco Constâncio
 Author URI: http://www.betasix.net
 */
@@ -58,7 +58,7 @@ function cpvg_load_scripts(){
 }
 
 function cpvg_load_admin_scripts(){
-	load_scripts();
+	cpvg_load_scripts();
 	wp_enqueue_script('jquery-ui');
 	wp_enqueue_script('jquery-ui-draggable');
 	wp_enqueue_script('jquery-ui-droppable');
@@ -398,7 +398,8 @@ function cpvg_load_fieldtypes($output_json=false){
 	$files = array();
 	if ($handle = opendir(CPVG_FIELDTYPES_DIR)) {
 		while (false !== ($file = readdir($handle))) {
-			if(end(explode(".", $file)) == "php") {
+			$exploded_filepath = explode(".", $file);
+			if(end($exploded_filepath) == "php") {
 				$files[] = preg_replace("/\\.[^.\\s]{3,4}$/", "", str_replace($find_strings,$replace_strings,$file));
 			}
 		}
@@ -432,7 +433,8 @@ function cpvg_get_extensions_files($file_type="php",$dir=CPVG_POST_TEMPLATE_DIR)
 
 	if ($handle = opendir($dir)) {
 		while (false !== ($file = readdir($handle))) {
-			if(end(explode(".", $file)) == $file_type) {
+			$exploded_file = explode(".", $file);
+			if(end($exploded_file) == $file_type) {
 				$files[preg_replace("/\\.[^.\\s]{3,4}$/", "", $file)] = trim(preg_replace("/\\.[^.\\s]{3,4}$/", "", str_replace($find_strings,$replace_strings,$file)));
 			}
 		}
